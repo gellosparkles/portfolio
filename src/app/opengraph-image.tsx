@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 import { site } from "@/content/site";
 
-export const alt = `${site.name}: ML & Computer Vision`;
+export const alt = `${site.name}: ${site.focus}`;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -23,9 +23,9 @@ export default function OpengraphImage() {
       >
         <div style={{ fontSize: 28, color: "#7c9bff", letterSpacing: 4 }}>{`USC VITERBI · ECE · ${site.graduation.toUpperCase()}`}</div>
         <div style={{ fontSize: 96, fontWeight: 700, marginTop: 16 }}>{site.name}</div>
-        <div style={{ fontSize: 36, color: "#9aa1ad", marginTop: 12 }}>Applied ML · Computer Vision · Embedded ML</div>
+        <div style={{ fontSize: 36, color: "#9aa1ad", marginTop: 12 }}>ML · Embedded Systems · Sensors · Robotics</div>
         <div style={{ fontSize: 30, marginTop: 48, display: "flex", gap: 48 }}>
-          <span>84.4% gesture recognition</span>
+          <span>85% gesture recognition</span>
           <span style={{ color: "#9aa1ad" }}>|</span>
           <span>CURVE research fellow</span>
         </div>

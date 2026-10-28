@@ -19,21 +19,22 @@ export default function Home() {
       <section className="mx-auto grid max-w-5xl items-center gap-6 px-4 pb-10 pt-12 sm:px-6 md:grid-cols-[1.05fr_1fr] md:pt-20">
         <div>
           <p className="font-mono text-xs uppercase tracking-widest text-accent">
-            ECE · USC Viterbi · {site.graduation}
+            {site.focus} · USC Viterbi ECE · {site.graduation}
           </p>
           <h1 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">{site.name}</h1>
           <p className="mt-1 text-sm text-muted">Legal name: {site.legalName}</p>
           <p className="mt-5 text-lg leading-relaxed">{site.tagline}</p>
           <p className="mt-4 text-sm text-muted">{site.seeking}</p>
           <div className="mt-6 flex flex-wrap gap-3 text-sm">
-            <Link href="#projects" className="rounded-full bg-accent px-4 py-2 font-medium text-bg hover:opacity-90">
-              See projects
-            </Link>
-            {contacts.map((c) => (
+            {contacts.map((c, i) => (
               <a
                 key={c.label}
                 href={c.href}
-                className="rounded-full border border-line px-4 py-2 hover:border-accent"
+                className={
+                  i === 0
+                    ? "rounded-full bg-accent px-4 py-2 font-medium text-bg hover:opacity-90"
+                    : "rounded-full border border-line px-4 py-2 hover:border-accent"
+                }
                 {...(c.href.startsWith("http") ? { target: "_blank", rel: "noreferrer" } : {})}
               >
                 {c.label}
@@ -53,8 +54,8 @@ export default function Home() {
       <div className="border-y border-line bg-surface">
         <dl className="mx-auto grid max-w-5xl grid-cols-2 gap-px px-4 sm:grid-cols-4 sm:px-6">
           {[
-            ["84.4%", "gesture-recognition accuracy (+18.8 pts)"],
-            ["3.84", "GPA · Dean's List"],
+            ["85%", "gesture-recognition accuracy"],
+            ["3.85", "GPA · Dean's List"],
             ["1st", "place, USC Buildathon (Hubl)"],
             ["CURVE", "research fellow, Khan Lab"],
           ].map(([v, l]) => (
@@ -80,13 +81,9 @@ export default function Home() {
                   {e.when} · {e.where}
                 </p>
               </div>
-              <ul className="mt-2 space-y-1.5 text-sm leading-relaxed text-muted">
-                {e.points.map((pt) => (
-                  <li key={pt}>{pt}</li>
-                ))}
-              </ul>
+              <p className="mt-2 text-sm leading-relaxed text-muted">{e.summary}</p>
               <ul className="mt-3 flex flex-wrap gap-1.5">
-                {e.tags.map((t) => (
+                {e.chips.map((t) => (
                   <li key={t} className="rounded-full border border-line px-2.5 py-0.5 text-xs">
                     {t}
                   </li>
@@ -161,17 +158,10 @@ export default function Home() {
               <p key={para}>{para}</p>
             ))}
             <h3 className="pt-4 text-sm font-semibold uppercase tracking-wider text-muted">Education</h3>
-            <ul className="space-y-3">
-              {education.map((e) => (
-                <li key={e.school}>
-                  <p className="font-medium">{e.school}</p>
-                  <p className="text-sm text-muted">
-                    {e.degree}
-                    {e.when && ` · ${e.when}`}
-                  </p>
-                </li>
-              ))}
-            </ul>
+            <p className="font-medium">{education.school}</p>
+            <p className="text-sm text-muted">
+              {education.degree} · {education.when} · GPA {education.gpa}
+            </p>
           </div>
           <div className="space-y-8">
             <div>
@@ -212,18 +202,13 @@ export default function Home() {
         </div>
 
         <h3 className="mt-12 text-sm font-semibold uppercase tracking-wider text-muted">Skills</h3>
-        <div className="mt-4 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <ul className="mt-4 flex flex-wrap gap-1.5">
           {skills.map((s) => (
-            <div key={s.group}>
-              <p className="font-medium">{s.group}</p>
-              <ul className="mt-2 space-y-1 text-sm text-muted">
-                {s.items.map((i) => (
-                  <li key={i}>{i}</li>
-                ))}
-              </ul>
-            </div>
+            <li key={s} className="rounded-full border border-line px-2.5 py-0.5 text-xs">
+              {s}
+            </li>
           ))}
-        </div>
+        </ul>
       </Section>
 
       <p className="mx-auto -mt-8 max-w-5xl px-4 text-sm text-muted sm:px-6">
@@ -232,7 +217,7 @@ export default function Home() {
 
       <Section id="contact" title="Contact">
         <p className="max-w-xl leading-relaxed">
-          I&apos;m looking for internships in ML / AI research and applied ML engineering. The fastest way to reach
+          I&apos;m looking for Summer 2027 internships in AI and hardware systems. The fastest way to reach
           me is below.
         </p>
         <ul className="mt-6 grid gap-3 sm:grid-cols-2">

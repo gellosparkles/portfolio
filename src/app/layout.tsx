@@ -17,11 +17,11 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const description = `${site.name} (legal name ${site.legalName}): ${site.role}, ${site.graduation}. Applied machine learning and computer vision projects and research.`;
+const description = `${site.name} (legal name ${site.legalName}): ${site.role}, ${site.graduation}. Portfolio of AI and hardware systems work: ML, embedded systems, sensors and robotics.`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: { default: `${site.name} | ML & Computer Vision`, template: `%s | ${site.name}` },
+  title: { default: `${site.name} | ${site.focus}`, template: `%s | ${site.name}` },
   description,
   openGraph: { type: "website", title: site.name, description, siteName: site.name },
   twitter: { card: "summary_large_image", title: site.name, description },

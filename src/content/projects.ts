@@ -14,7 +14,7 @@ export const projects: Project[] = [
     kicker: "Research · Poster presentation",
     summary:
       "A MobileNet + GRU model that reads hand gestures from video clips. A pre-trained CNN extracts per-frame features, and a GRU models how they change over time. Hyperparameters were tuned with Optuna.",
-    metric: { value: "84.4%", label: "test accuracy (baseline: 65.6%)" },
+    metric: { value: "85%", label: "test accuracy (baseline: 66%)" },
     tags: ["Keras", "MobileNet", "GRU", "Optuna", "Transfer learning"],
   },
   {

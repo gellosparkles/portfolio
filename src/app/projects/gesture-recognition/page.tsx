@@ -8,7 +8,7 @@ import { publications } from "@/content/site";
 export const metadata: Metadata = {
   title: "Dynamic Hand-Gesture Recognition",
   description:
-    "MobileNet + GRU model for video hand-gesture recognition: 84.38% test accuracy versus 65.62% for an RNN + GRU baseline.",
+    "MobileNet + GRU model for video hand-gesture recognition: 85% test accuracy versus 66% for an RNN + GRU baseline.",
 };
 
 const paper = publications[0];
@@ -22,8 +22,8 @@ export default function GesturePage() {
         title="Dynamic Hand-Gesture Recognition with MobileNet + GRU"
         lede="Static gesture classifiers look at one frame at a time, so they can't tell a left swipe from a right swipe. This model reads the whole clip. A pre-trained MobileNet extracts what each frame shows, and a GRU learns how it moves."
         facts={[
-          ["Test accuracy", `${ours.accuracy}%`],
-          ["Baseline (RNN + GRU)", `${baseline.accuracy}%`],
+          ["Test accuracy", "85%"],
+          ["Baseline (RNN + GRU)", "66%"],
           ["Test loss", `${ours.loss} vs ${baseline.loss}`],
           ["Presented", "Poster, 20th Formosa Plastics Applied Tech. Seminar"],
         ]}
