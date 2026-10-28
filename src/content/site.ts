@@ -18,7 +18,7 @@ export const site = {
     email: "hansilee@usc.edu" as string | null,
     linkedin: "https://www.linkedin.com/in/tzjinglee" as string | null,
     github: "https://github.com/gellosparkles" as string | null,
-    resume: null as string | null,
+    resume: "/resume.pdf" as string | null,
   },
 };
 
