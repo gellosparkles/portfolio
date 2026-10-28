@@ -131,17 +131,34 @@ export default function Home() {
         <section className="pb-16">
           <Heading id="organizations" n="03" title="Organizations" />
           <ul className="mx-auto mt-6 grid max-w-5xl gap-3 px-4 sm:grid-cols-2 sm:px-6 lg:grid-cols-3">
-            {organizations.map((o) => (
-              <li key={o.org} className="flex items-center justify-between gap-3 rounded-lg border border-line bg-surface px-4 py-3">
-                <span>
-                  <span className="font-medium">{o.org}</span>
-                  <span className="block text-xs text-muted">{o.role}</span>
-                </span>
-                <span className="label shrink-0 rounded-full border px-2 py-0.5" style={{ color: tagColor[o.tag], borderColor: tagColor[o.tag] }}>
-                  {o.tag}
-                </span>
-              </li>
-            ))}
+            {organizations.map((o) => {
+              const body = (
+                <>
+                  <span>
+                    <span className="font-medium">
+                      {o.org}
+                      {o.href && <span aria-hidden className="ml-1 text-muted transition-colors group-hover:text-accent">↗</span>}
+                    </span>
+                    <span className="block text-xs text-muted">{o.role}</span>
+                  </span>
+                  <span className="label shrink-0 rounded-full border px-2 py-0.5" style={{ color: tagColor[o.tag], borderColor: tagColor[o.tag] }}>
+                    {o.tag}
+                  </span>
+                </>
+              );
+              const box = "flex h-full items-center justify-between gap-3 rounded-lg border border-line bg-surface px-4 py-3";
+              return (
+                <li key={o.org}>
+                  {o.href ? (
+                    <a href={o.href} target="_blank" rel="noreferrer" className={`group ${box} transition-colors hover:border-accent`}>
+                      {body}
+                    </a>
+                  ) : (
+                    <div className={box}>{body}</div>
+                  )}
+                </li>
+              );
+            })}
           </ul>
         </section>
 
