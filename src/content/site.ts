@@ -22,6 +22,14 @@ export const site = {
   },
 };
 
+// Headline numbers shown under the hero, in display order.
+export const stats = [
+  { value: "2 labs · ~2 yrs", label: "AI & bio-sensor research" },
+  { value: "2 wins · $1,200", label: "hackathon prizes (1st Buildathon $1,000, 2nd Games Week $200)" },
+  { value: "2", label: "co-authored manuscripts, to appear 2026" },
+  { value: "5", label: "organizations: robotics · cyber · software" },
+];
+
 export const education = {
   school: "University of Southern California, Viterbi School of Engineering",
   degree: "B.S. Electrical and Computer Engineering",

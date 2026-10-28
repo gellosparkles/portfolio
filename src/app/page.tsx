@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { NeuralHero } from "@/components/three/lazy";
 import { Section } from "@/components/Section";
-import { certifications, education, experience, honors, interests, publications, site, skills } from "@/content/site";
+import { certifications, education, experience, honors, interests, publications, site, skills, stats } from "@/content/site";
 import { projects } from "@/content/projects";
 
 export default function Home() {
@@ -52,17 +52,11 @@ export default function Home() {
 
       {/* Stats strip */}
       <div className="border-y border-line bg-surface">
-        <dl className="mx-auto grid max-w-5xl grid-cols-2 gap-px px-4 sm:grid-cols-4 sm:px-6">
-          {[
-            ["85%", "gesture-recognition accuracy"],
-            ["3.85", "GPA · Dean's List"],
-            ["1st", "place, USC Buildathon (Hubl)"],
-            ["CURVE", "research fellow, Khan Lab"],
-          ].map(([v, l]) => (
-            <div key={l} className="py-5">
-              <dt className="sr-only">{l}</dt>
-              <dd className="text-2xl font-semibold tracking-tight">{v}</dd>
-              <dd className="text-xs text-muted">{l}</dd>
+        <dl className="mx-auto grid max-w-5xl grid-cols-2 gap-x-4 px-4 sm:grid-cols-4 sm:px-6">
+          {stats.map((s) => (
+            <div key={s.label} className="py-5">
+              <dt className="text-xl font-semibold tracking-tight sm:text-2xl">{s.value}</dt>
+              <dd className="mt-1 text-xs text-muted">{s.label}</dd>
             </div>
           ))}
         </dl>
