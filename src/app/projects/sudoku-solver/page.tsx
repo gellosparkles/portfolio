@@ -55,6 +55,7 @@ export default function SudokuPage() {
           ["ML tooling", "Edge Impulse → Python"],
           ["Solver speed", "< 0.2 s per puzzle"],
         ]}
+        link={{ href: "/projects/sudoku/engineering-notebook.pdf", label: "Read the engineering notebook (PDF)" }}
       />
 
       <Block title="Try the solver">
@@ -72,11 +73,10 @@ export default function SudokuPage() {
           sharper digit contrast, and side openings keep the ESP32-CAM&apos;s reset button reachable when switching
           firmware. The camera streams over Wi-Fi from Arduino IDE, and I tuned its angle, zoom and lighting.
         </p>
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-          <Figure src="/projects/sudoku/sketch.png" alt="Hand sketch of the rig with dimensions 13×13×12 studs" caption="Design sketch: 13 × 13 × 12 studs." />
-          <Figure src="/projects/sudoku/lab-bench.jpg" alt="Laptop, oscilloscope and LEGO rig on a lab bench" caption="Testing on the lab bench." />
-          <Figure src="/projects/sudoku/digit-input.jpg" alt="LEGO rig over an iPad showing the digit 8" caption="Single-digit input on the iPad." />
-          <Figure src="/projects/sudoku/grid-input.jpg" alt="LEGO rig over an iPad showing a small grid of digits" caption="Multi-digit input." />
+        {/* Capped at each source image's native width (252 px and 189 px) so they never upscale. */}
+        <div className="flex flex-wrap items-start justify-center gap-6">
+          <Figure src="/projects/sudoku/sketch.png" alt="Hand sketch of the rig with dimensions 13×13×12 studs" caption="Design sketch: 13 × 13 × 12 studs." className="w-full max-w-[252px]" />
+          <Figure src="/projects/sudoku/lab-bench.jpg" alt="Laptop, oscilloscope and LEGO rig on a lab bench" caption="Testing on the lab bench." className="w-full max-w-[189px]" />
         </div>
       </Block>
 

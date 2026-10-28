@@ -51,40 +51,48 @@ function build() {
     });
   }
 
-  // Route: start at the hub farthest from the venue, always visit the nearest unvisited hub, then drive to the venue.
-  const rest = new Set(hubs.keys());
-  const first = [...rest].reduce((b, i) => (dist(hubs[i], VENUE) > dist(hubs[b], VENUE) ? i : b));
-  const order = [first];
-  rest.delete(first);
-  while (rest.size) {
-    const last = hubs[order[order.length - 1]];
-    const next = [...rest].reduce((b, i) => (dist(hubs[i], last) < dist(hubs[b], last) ? i : b));
-    order.push(next);
-    rest.delete(next);
-  }
-  return { dots, hubs, assign, route: [...order.map((i) => hubs[i]), VENUE] };
+  // Two buses. Each starts at its hub farthest from the venue, visits its nearest unvisited hub next, then drives to the venue.
+  const routes = BUSES.map(({ hubs: mine }) => {
+    const rest = new Set(mine);
+    const first = [...rest].reduce((b, i) => (dist(hubs[i], VENUE) > dist(hubs[b], VENUE) ? i : b));
+    const order = [first];
+    rest.delete(first);
+    while (rest.size) {
+      const last = hubs[order[order.length - 1]];
+      const next = [...rest].reduce((b, i) => (dist(hubs[i], last) < dist(hubs[b], last) ? i : b));
+      order.push(next);
+      rest.delete(next);
+    }
+    return [...order.map((i) => hubs[i]), VENUE];
+  });
+  return { dots, hubs, assign, routes };
 }
 
-const { dots, hubs, assign, route } = build();
-const segLens = route.slice(1).map((p, i) => dist(route[i], p));
-const total = segLens.reduce((a, b) => a + b, 0);
+// Hub indices follow AREAS: bus 1 takes Pasadena and Downtown, bus 2 the Westside and Hollywood.
+const BUSES = [
+  { name: "Bus 1", hubs: [4, 3], color: "var(--color-accent)" },
+  { name: "Bus 2", hubs: [0, 1, 2], color: "var(--color-warn)" },
+];
 
-/** Point a fraction f (0..1) of the way along the route. */
-function along(f: number): Pt {
-  let d = f * total;
-  for (let i = 0; i < segLens.length; i++) {
-    if (d <= segLens[i]) {
-      const t = d / segLens[i];
+const { dots, hubs, assign, routes } = build();
+
+/** Point a fraction f (0..1) of the way along a route. */
+function along(route: Pt[], f: number): Pt {
+  const lens = route.slice(1).map((p, i) => dist(route[i], p));
+  let d = f * lens.reduce((a, b) => a + b, 0);
+  for (let i = 0; i < lens.length; i++) {
+    if (d <= lens[i]) {
+      const t = d / lens[i];
       return { x: route[i].x + (route[i + 1].x - route[i].x) * t, y: route[i].y + (route[i + 1].y - route[i].y) * t };
     }
-    d -= segLens[i];
+    d -= lens[i];
   }
   return route[route.length - 1];
 }
 
 const ease = (t: number) => t * t * (3 - 2 * t);
 const COLORS = ["var(--color-accent)", "#e0a030", "#c25a8a", "#4aa3a0", "#7a6fd0"];
-const routePoints = route.map((p) => `${p.x},${p.y}`).join(" ");
+const routePoints = routes.map((r) => r.map((p) => `${p.x},${p.y}`).join(" "));
 
 export default function HubRouteDemo({ active }: { active: boolean }) {
   const reduced = useReducedMotion();
@@ -113,7 +121,6 @@ export default function HubRouteDemo({ active }: { active: boolean }) {
   const move = ease(Math.min(1, p / CLUSTER_END));
   const clustered = p > 0;
   const routeP = Math.max(0, (p - CLUSTER_END) / (1 - CLUSTER_END));
-  const bus = along(routeP);
 
   const play = () => {
     from.current = 0;
@@ -127,24 +134,26 @@ export default function HubRouteDemo({ active }: { active: boolean }) {
         <svg
           viewBox={`0 0 ${W} ${H}`}
           role="img"
-          aria-label="Simplified map of the Los Angeles area. Scattered rider dots group into five hubs, then one bus route picks up at each hub and ends at the event venue."
+          aria-label="Simplified map of the Los Angeles area. Scattered rider dots group into five hubs, then two buses pick up at the hubs and both end at the event venue: bus 1 through Pasadena and Downtown, bus 2 through Hollywood, Westwood and Santa Monica."
           className="h-auto w-full rounded-xl border border-line bg-bg text-fg"
         >
           <BasinMap />
 
-          {routeP > 0 && (
-            <polyline
-              points={routePoints}
-              pathLength={1}
-              strokeDasharray={1}
-              strokeDashoffset={1 - routeP}
-              fill="none"
-              className="stroke-accent"
-              strokeWidth="4"
-              strokeLinejoin="round"
-              strokeLinecap="round"
-            />
-          )}
+          {routeP > 0 &&
+            BUSES.map((b, i) => (
+              <polyline
+                key={b.name}
+                points={routePoints[i]}
+                pathLength={1}
+                strokeDasharray={1}
+                strokeDashoffset={1 - routeP}
+                fill="none"
+                style={{ stroke: b.color }}
+                strokeWidth="4"
+                strokeLinejoin="round"
+                strokeLinecap="round"
+              />
+            ))}
 
           {clustered &&
             hubs.map((h, i) => (
@@ -166,7 +175,18 @@ export default function HubRouteDemo({ active }: { active: boolean }) {
             </text>
           </g>
 
-          {routeP > 0 && <rect x={bus.x - 10} y={bus.y - 6} width="20" height="12" rx="3" className="fill-accent stroke-bg" strokeWidth="2" />}
+          {routeP > 0 &&
+            BUSES.map((b, i) => {
+              const at = along(routes[i], routeP);
+              return (
+                <g key={b.name}>
+                  <rect x={at.x - 10} y={at.y - 6} width="20" height="12" rx="3" style={{ fill: b.color }} className="stroke-bg" strokeWidth="2" />
+                  <text x={at.x} y={at.y + 3} textAnchor="middle" fontSize="8" fontWeight="700" className="fill-bg font-mono">
+                    {i + 1}
+                  </text>
+                </g>
+              );
+            })}
         </svg>
 
         <div className="mt-3 flex items-center gap-3 text-sm">
@@ -181,9 +201,17 @@ export default function HubRouteDemo({ active }: { active: boolean }) {
             </button>
           )}
           <p aria-live="polite" className="text-muted">
-            {p >= 1 ? "5 pickup hubs, one bus route, straight to the venue." : "Riders start scattered across the city."}
+            {p >= 1 ? "5 pickup hubs, 2 buses, both straight to the venue." : "Riders start scattered across the city."}
           </p>
         </div>
+        <ul className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted">
+          {BUSES.map((b) => (
+            <li key={b.name} className="flex items-center gap-1.5">
+              <span className="h-1 w-4 rounded-full" style={{ background: b.color }} />
+              {b.name}: {b.hubs.map((i) => AREAS[i].name).join(", ")}
+            </li>
+          ))}
+        </ul>
       </div>
 
       <p className="w-fit rounded-xl border border-line bg-surface px-4 py-3 text-sm">

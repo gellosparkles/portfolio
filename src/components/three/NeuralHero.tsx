@@ -5,7 +5,7 @@ import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import CanvasShell, { readCssColor, useMotionAllowed } from "./CanvasShell";
 import Label from "./Label";
-import { gestureClasses } from "@/content/gesture";
+import { gestureEmoji } from "@/content/gesture";
 
 // Layer sizes echo the gesture model: video frames → CNN features → GRU state → 5 classes.
 const LAYERS = [
@@ -178,7 +178,7 @@ function Network() {
         <meshBasicMaterial color={accent} toneMapped={false} />
       </instancedMesh>
       {outputs.map((n, i) => (
-        <Label key={i} text={gestureClasses[i]} position={[n.pos.x + 0.26, n.pos.y, n.pos.z]} height={0.19} align="left" />
+        <Label key={i} text={gestureEmoji[i]} mono={false} position={[n.pos.x + 0.22, n.pos.y, n.pos.z]} height={0.6} align="left" />
       ))}
     </group>
   );
@@ -204,7 +204,7 @@ export default function NeuralHero({ className }: { className?: string }) {
   return (
     <CanvasShell
       className={className}
-      label="Animated neural network: video frames flow through MobileNet features and a GRU into five gesture classes. It turns to follow your pointer while you hover over it."
+      label="Animated neural network: video frames flow through MobileNet features and a GRU into five gesture classes: left swipe, right swipe, pause, thumbs down and thumbs up. It turns to follow your pointer while you hover over it."
       camera={{ position: [0, 0.4, 7.2], fov: 45 }}
     >
       <FitCamera />

@@ -6,11 +6,13 @@ export function CaseStudyHeader({
   title,
   lede,
   facts,
+  link,
 }: {
   kicker: string;
   title: string;
   lede: string;
   facts: [string, string][];
+  link?: { href: string; label: string };
 }) {
   return (
     <header className="mx-auto max-w-5xl px-4 pt-10 sm:px-6">
@@ -20,6 +22,11 @@ export function CaseStudyHeader({
       <p className="mt-6 font-mono text-xs uppercase tracking-widest text-accent">{kicker}</p>
       <h1 className="mt-2 max-w-3xl text-3xl font-semibold tracking-tight sm:text-4xl">{title}</h1>
       <p className="mt-4 max-w-3xl text-lg leading-relaxed text-muted">{lede}</p>
+      {link && (
+        <a href={link.href} target="_blank" rel="noreferrer" className="mt-4 inline-block text-sm font-medium text-accent hover:underline">
+          {link.label} →
+        </a>
+      )}
       <dl className="mt-8 grid grid-cols-2 gap-4 border-y border-line py-5 sm:grid-cols-4">
         {facts.map(([k, v]) => (
           <div key={k}>

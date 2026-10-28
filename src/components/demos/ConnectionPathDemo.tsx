@@ -122,6 +122,16 @@ function Node({ x, y, label, accent }: { x: number; y: number; label: string; ac
   );
 }
 
+const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
+const ctrl = "rounded-full border border-line px-2.5 py-0.5 hover:border-accent disabled:opacity-50";
+const PAN: [string, number, number, string][] = [
+  ["Pan left", -1, 0, "←"],
+  ["Tilt up", 0, -1, "↑"],
+  ["Center camera", 0, 0, "⌂"],
+  ["Tilt down", 0, 1, "↓"],
+  ["Pan right", 1, 0, "→"],
+];
+
 /** Mock of the browser page a user opens to watch the Pi's webcam. The "video" is a drawn scene, not a real feed. */
 function Viewer({ relayed, active, reduced }: { relayed: boolean; active: boolean; reduced: boolean }) {
   const [stopped, setStopped] = useState(false);
@@ -150,7 +160,42 @@ function Viewer({ relayed, active, reduced }: { relayed: boolean; active: boolea
     else el.pauseAnimations();
   }, [live, active, reduced]);
 
-  const toggle = () => setStopped((s) => !s);
+  // Pan/tilt: the scene is drawn 1.25x larger than the frame, so the camera can look around inside it.
+  const [pan, setPan] = useState({ x: 0, y: 0 });
+  const [recFrom, setRecFrom] = useState<number | null>(null);
+  const [flash, setFlash] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
+  const toastTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  useEffect(() => () => clearTimeout(toastTimer.current), []);
+
+  const notify = (msg: string) => {
+    setToast(msg);
+    clearTimeout(toastTimer.current);
+    toastTimer.current = setTimeout(() => setToast(null), 1800);
+  };
+  const stamp = () => new Date().toLocaleTimeString([], { hour12: false }).replaceAll(":", "");
+
+  const toggle = () => {
+    setStopped((s) => !s);
+    setRecFrom(null);
+  };
+  const snapshot = () => {
+    setFlash(true);
+    setTimeout(() => setFlash(false), 150);
+    notify(`Saved snapshot_${stamp()}.jpg`);
+  };
+  const record = () => {
+    if (recFrom === null) setRecFrom(Date.now());
+    else {
+      notify(`Saved clip_${stamp()}.webm`);
+      setRecFrom(null);
+    }
+  };
+  const move = (dx: number, dy: number) =>
+    setPan((p) => (dx === 0 && dy === 0 ? { x: 0, y: 0 } : { x: clamp(p.x + dx, -2, 2), y: clamp(p.y + dy, -2, 2) }));
+
+  const recording = live && recFrom !== null;
+  const recSecs = recording ? Math.max(0, Math.floor((now.getTime() - recFrom) / 1000)) : 0;
 
   return (
     <div className="overflow-hidden rounded-xl border border-line bg-surface shadow-sm">
@@ -165,6 +210,12 @@ function Viewer({ relayed, active, reduced }: { relayed: boolean; active: boolea
 
       <div className="relative aspect-video bg-[#101418]">
         <svg ref={scene} viewBox="0 0 320 180" className="absolute inset-0 h-full w-full" aria-hidden>
+          <g
+            style={{
+              transform: `translate(${-40 - pan.x * 20}px, ${-22.5 - pan.y * 11}px) scale(1.25)`,
+              transition: reduced ? undefined : "transform 400ms ease",
+            }}
+          >
           {/* a window with a passing cloud, a desk and a plant */}
           <rect x="190" y="22" width="100" height="78" rx="3" fill="#2b3a4a" />
           <g opacity="0.8">
@@ -181,6 +232,7 @@ function Viewer({ relayed, active, reduced }: { relayed: boolean; active: boolea
           <circle cx="160" cy="120" r="2" fill="#4ade80">
             <animate attributeName="opacity" values="1;0.2;1" dur="1.6s" repeatCount="indefinite" />
           </circle>
+          </g>
         </svg>
 
         {state !== "live" && (
@@ -190,12 +242,38 @@ function Viewer({ relayed, active, reduced }: { relayed: boolean; active: boolea
         )}
         {live && (
           <>
-            <span className="absolute left-2 top-2 rounded bg-[#dc2626] px-1.5 py-0.5 font-mono text-[10px] font-semibold text-white">● LIVE</span>
+            <span className="absolute left-2 top-2 rounded bg-[#dc2626] px-1.5 py-0.5 font-mono text-[10px] font-semibold text-white">
+              {recording ? `● REC ${Math.floor(recSecs / 60)}:${String(recSecs % 60).padStart(2, "0")}` : "● LIVE"}
+            </span>
             <span className="absolute bottom-2 right-2 rounded bg-black/50 px-1.5 py-0.5 font-mono text-[10px] text-white">
               {now.toLocaleTimeString([], { hour12: false })}
             </span>
           </>
         )}
+        {flash && <div className="absolute inset-0 bg-white/80" />}
+        {toast && (
+          <span role="status" className="absolute bottom-2 left-2 rounded bg-black/70 px-1.5 py-0.5 font-mono text-[10px] text-white">
+            {toast}
+          </span>
+        )}
+      </div>
+
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line px-3 py-2 text-xs">
+        <div className="flex gap-1.5">
+          <button type="button" onClick={snapshot} disabled={!live} className={ctrl}>
+            Snapshot
+          </button>
+          <button type="button" onClick={record} disabled={!live} aria-pressed={recording} className={`${ctrl} ${recording ? "border-[#dc2626] text-[#dc2626]" : ""}`}>
+            {recording ? "■ Stop" : "● Record"}
+          </button>
+        </div>
+        <div role="group" aria-label="Camera movement" className="flex gap-1">
+          {PAN.map(([label, dx, dy, glyph]) => (
+            <button key={label} type="button" onClick={() => move(dx, dy)} disabled={!live} aria-label={label} title={label} className={`${ctrl} w-7 px-0 text-center`}>
+              {glyph}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-2 px-3 py-2 text-xs">

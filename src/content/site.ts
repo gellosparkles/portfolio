@@ -92,7 +92,7 @@ export const experience: Experience[] = [
     big: { value: "14/14", unit: "seats in 3 days" },
     hook: "Pooled buses to events. The first trip sold out in three days.",
     details: [
-      "Riders are clustered into pickup hubs, then a bus route is planned through the hubs.",
+      "Riders are clustered into pickup hubs, then routes are planned so each bus covers its nearby hubs and ends at the venue.",
       "First trip: 14 of 14 seats sold out in 3 days, at $15 a seat versus $31–62 by Uber.",
       "Hubl won 1st place at the USC Buildathon and 2nd at Games Week, and joined the Greif Incubator.",
     ],

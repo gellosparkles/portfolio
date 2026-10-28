@@ -27,7 +27,7 @@ export default function Label({
 }) {
   const { texture, aspect } = useMemo(() => {
     const px = 64;
-    const font = `${weight} ${px}px ${mono ? "ui-monospace, SFMono-Regular, Menlo, monospace" : "ui-sans-serif, system-ui, sans-serif"}`;
+    const font = `${weight} ${px}px ${mono ? "ui-monospace, SFMono-Regular, Menlo, monospace" : "ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji'"}`;
     const c = document.createElement("canvas");
     const ctx = c.getContext("2d")!;
     ctx.font = font;

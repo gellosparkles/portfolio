@@ -1,6 +1,7 @@
 // Values read from Figs. 5–10 of the paper. Rows = true label, columns = predicted.
 
 export const gestureClasses = ["Left swipe", "Right swipe", "Pause", "Thumbs down", "Thumbs up"];
+export const gestureEmoji = ["👈", "👉", "✋", "👎", "👍"];
 
 export type ModelResult = {
   id: "mobilenet" | "rnn";
