@@ -130,9 +130,9 @@ export default function Home() {
         {/* Organizations */}
         <section className="pb-16">
           <Heading id="organizations" n="03" title="Organizations" />
-          <ul className="mx-auto mt-6 grid max-w-5xl gap-px px-4 sm:grid-cols-2 sm:px-6 lg:grid-cols-3">
+          <ul className="mx-auto mt-6 grid max-w-5xl gap-3 px-4 sm:grid-cols-2 sm:px-6 lg:grid-cols-3">
             {organizations.map((o) => (
-              <li key={o.org} className="flex items-center justify-between gap-3 border-b border-line py-3">
+              <li key={o.org} className="flex items-center justify-between gap-3 rounded-lg border border-line bg-surface px-4 py-3">
                 <span>
                   <span className="font-medium">{o.org}</span>
                   <span className="block text-xs text-muted">{o.role}</span>
