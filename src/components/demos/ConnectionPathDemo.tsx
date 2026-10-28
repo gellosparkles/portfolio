@@ -205,7 +205,7 @@ function Viewer({ relayed, active, reduced }: { relayed: boolean; active: boolea
             <span key={i} className="h-2 w-2 rounded-full bg-line" />
           ))}
         </span>
-        <span className="flex-1 truncate rounded-md bg-bg px-2 py-0.5 font-mono text-[11px] text-muted">pi-cam.example/view</span>
+        <span className="flex-1 truncate rounded-md bg-bg px-2 py-0.5 font-mono text-xs text-muted">pi-cam.example/view</span>
       </div>
 
       <div className="relative aspect-video bg-[#101418]">
@@ -242,17 +242,17 @@ function Viewer({ relayed, active, reduced }: { relayed: boolean; active: boolea
         )}
         {live && (
           <>
-            <span className="absolute left-2 top-2 rounded bg-[#dc2626] px-1.5 py-0.5 font-mono text-[10px] font-semibold text-white">
+            <span className="absolute left-2 top-2 rounded bg-[#dc2626] px-1.5 py-0.5 font-mono text-[11px] font-semibold text-white">
               {recording ? `● REC ${Math.floor(recSecs / 60)}:${String(recSecs % 60).padStart(2, "0")}` : "● LIVE"}
             </span>
-            <span className="absolute bottom-2 right-2 rounded bg-black/50 px-1.5 py-0.5 font-mono text-[10px] text-white">
+            <span className="absolute bottom-2 right-2 rounded bg-black/50 px-1.5 py-0.5 font-mono text-[11px] text-white">
               {now.toLocaleTimeString([], { hour12: false })}
             </span>
           </>
         )}
         {flash && <div className="absolute inset-0 bg-white/80" />}
         {toast && (
-          <span role="status" className="absolute bottom-2 left-2 rounded bg-black/70 px-1.5 py-0.5 font-mono text-[10px] text-white">
+          <span role="status" className="absolute bottom-2 left-2 rounded bg-black/70 px-1.5 py-0.5 font-mono text-[11px] text-white">
             {toast}
           </span>
         )}

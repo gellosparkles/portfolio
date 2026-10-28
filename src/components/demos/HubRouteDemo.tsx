@@ -170,7 +170,7 @@ export default function HubRouteDemo({ active }: { active: boolean }) {
           <g>
             <circle cx={VENUE.x} cy={VENUE.y} r="9" className="fill-fg" />
             <path d={`M${VENUE.x - 4},${VENUE.y} l3,3 l5,-6`} className="stroke-bg" strokeWidth="2" fill="none" />
-            <text x={VENUE.x + 13} y={VENUE.y + 4} fontSize="11" fontWeight="600" className="fill-current">
+            <text x={VENUE.x + 13} y={VENUE.y + 4} fontSize="13" fontWeight="600" className="fill-current">
               Venue
             </text>
           </g>
@@ -180,8 +180,8 @@ export default function HubRouteDemo({ active }: { active: boolean }) {
               const at = along(routes[i], routeP);
               return (
                 <g key={b.name}>
-                  <rect x={at.x - 10} y={at.y - 6} width="20" height="12" rx="3" style={{ fill: b.color }} className="stroke-bg" strokeWidth="2" />
-                  <text x={at.x} y={at.y + 3} textAnchor="middle" fontSize="8" fontWeight="700" className="fill-bg font-mono">
+                  <rect x={at.x - 11} y={at.y - 7} width="22" height="14" rx="3" style={{ fill: b.color }} className="stroke-bg" strokeWidth="2" />
+                  <text x={at.x} y={at.y + 3} textAnchor="middle" fontSize="9.5" fontWeight="700" className="fill-bg font-mono">
                     {i + 1}
                   </text>
                 </g>
@@ -246,7 +246,7 @@ function BasinMap() {
         className="fill-accent-soft"
         opacity="0.6"
       />
-      <text x="40" y="236" fontSize="10" letterSpacing="2" className="fill-muted">
+      <text x="30" y="236" fontSize="12" letterSpacing="2" className="fill-muted">
         PACIFIC
       </text>
       <g className="stroke-line" strokeWidth="2.5" fill="none" strokeLinejoin="round" strokeLinecap="round">
@@ -256,20 +256,20 @@ function BasinMap() {
       </g>
       {FREEWAYS.map((f) => (
         <g key={f.n}>
-          <rect x={f.at.x - 9} y={f.at.y - 6} width="18" height="12" rx="3" className="fill-bg stroke-line" />
-          <text x={f.at.x} y={f.at.y + 3} textAnchor="middle" fontSize="7.5" className="fill-muted font-mono">
+          <rect x={f.at.x - 11} y={f.at.y - 7} width="22" height="14" rx="3" className="fill-bg stroke-line" />
+          <text x={f.at.x} y={f.at.y + 3} textAnchor="middle" fontSize="9" className="fill-muted font-mono">
             {f.n}
           </text>
         </g>
       ))}
-      <text x="96" y="186" fontSize="9" className="fill-muted">
+      <text x="92" y="188" fontSize="11" className="fill-muted">
         LAX
       </text>
-      <text x="300" y="282" fontSize="9" className="fill-muted">
+      <text x="296" y="284" fontSize="11" className="fill-muted">
         Long Beach
       </text>
       {AREAS.map((a) => (
-        <text key={a.name} x={a.x} y={a.y - a.sy - 4} textAnchor="middle" fontSize="9.5" className="fill-muted">
+        <text key={a.name} x={a.x} y={a.y - a.sy - 4} textAnchor="middle" fontSize="11.5" className="fill-muted">
           {a.name}
         </text>
       ))}
