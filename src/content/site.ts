@@ -37,7 +37,7 @@ export const education = {
   gpa: "3.85",
 };
 
-export type DemoId = "hub-route" | "connection-path" | "audit-pipeline" | "spiral-sensor" | "tether-arm";
+export type DemoId = "hub-route" | "connection-path" | "audit-pipeline" | "spiral-sensor" | "tether-arm" | "case-studies";
 
 export type Experience = {
   org: string;
@@ -107,6 +107,7 @@ export const experience: Experience[] = [
     when: "Aug 2024 – Jun 2025",
     summary: "Gesture-recognition research and an ML Sudoku solver on an ESP32-CAM.",
     chips: ["85% accuracy", "Poster at 20th Formosa Seminar", "Solver < 0.2 s"],
+    demo: "case-studies",
   },
 ];
 

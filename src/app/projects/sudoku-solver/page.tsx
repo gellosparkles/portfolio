@@ -46,7 +46,7 @@ export default function SudokuPage() {
   return (
     <article>
       <CaseStudyHeader
-        kicker="Embedded ML · Project founder · 2024–25"
+        kicker="Embedded ML · Project founder · Aug 2024 – Jun 2025"
         title="An ML Sudoku Solver Built on a Microcontroller Camera"
         lede="The goal: point a camera at a Sudoku and get it solved. That means running digit recognition on a microcontroller-class device, then handing the grid to a solver. I founded the project in Chang Gung University's Intelligent Control Lab: I built the rig, trained and deployed the models, and wrote an original solving algorithm that finishes in under 0.2 seconds."
         facts={[

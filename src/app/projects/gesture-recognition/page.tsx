@@ -18,7 +18,7 @@ export default function GesturePage() {
   return (
     <article>
       <CaseStudyHeader
-        kicker="Research · Chang Gung University Intelligent Control Lab · 2024–25"
+        kicker="Research · Chang Gung University Intelligent Control Lab · Aug 2024 – Jun 2025"
         title="Dynamic Hand-Gesture Recognition with MobileNet + GRU"
         lede="Static gesture classifiers look at one frame at a time, so they can't tell a left swipe from a right swipe. This model reads the whole clip. A pre-trained MobileNet extracts what each frame shows, and a GRU learns how it moves."
         facts={[
