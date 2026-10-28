@@ -37,7 +37,7 @@ export const education = {
   gpa: "3.85",
 };
 
-export type DemoId = "hub-route" | "connection-path" | "audit-pipeline";
+export type DemoId = "hub-route" | "connection-path" | "audit-pipeline" | "spiral-sensor";
 
 export type Experience = {
   org: string;
@@ -61,6 +61,7 @@ export const experience: Experience[] = [
     summary:
       "Redesigned a published spiral sweat-collection layout to stop fluid leaks; the lab confirmed it was more reliable and performed better in experiments.",
     chips: ["CURVE Fellow", "2 manuscripts (to appear)", "Leak-free redesign", "Microfluidics"],
+    demo: "spiral-sensor",
   },
   {
     org: "Hubl LLC",
