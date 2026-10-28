@@ -48,3 +48,5 @@ Internship_apps/
 .claude/
 # resume contains a phone number; publish a copy as public/resume.pdf only once approved
 TzJing_Lee_Resume.pdf
+# supplementary private sources (award letter, resume with phone, unpublished lab CAD); never commit
+resources/
