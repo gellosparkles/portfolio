@@ -8,5 +8,6 @@ import type { DemoId } from "@/content/site";
 const placeholder = () => <div className="h-56 w-full animate-pulse rounded-xl bg-accent-soft/40" />;
 
 export const demos: Record<DemoId, ComponentType<{ active: boolean }>> = {
+  "hub-route": dynamic(() => import("./HubRouteDemo"), { ssr: false, loading: placeholder }),
   "connection-path": dynamic(() => import("./ConnectionPathDemo"), { ssr: false, loading: placeholder }),
 };

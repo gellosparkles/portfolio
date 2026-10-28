@@ -37,7 +37,7 @@ export const education = {
   gpa: "3.85",
 };
 
-export type DemoId = "connection-path";
+export type DemoId = "hub-route" | "connection-path";
 
 export type Experience = {
   org: string;
@@ -69,6 +69,7 @@ export const experience: Experience[] = [
     when: "Nov 2025 – Present",
     summary: "Pooled event buses: cluster riders into hubs, then route buses through them.",
     chips: ["1st Buildathon", "2nd Games Week", "Greif Incubator", "14/14 seats, sold out in 3 days"],
+    demo: "hub-route",
   },
   {
     org: "Institute for Information Industry",
