@@ -7,24 +7,109 @@ import CanvasShell, { readCssColor, useMotionAllowed } from "../three/CanvasShel
 
 type Mode = "published" | "redesign";
 
-const TURNS = 3;
-const TUBULAR = 240;
-const RADIAL = 8;
-const FILL_SECONDS = 5;
-const LEAK_AT = 0.5; // fraction of the channel where the original design starts to leak
-const STALL_AT = 0.62; // the leaking design never fills past this
-const DROPLETS = 7;
+const HALVES = 6; // half-turns in each spiral (3 full turns)
+const R0 = 0.24; // radius where the channel leaves the inlet
+const PITCH = 0.24; // radius gained per half-turn
+const WIDTH = 0.15; // channel width
+const STEP = 0.03; // sample spacing along the channel
+const FILL_SECONDS = 6;
+const LEAK_TRAVEL = 0.9; // how far the fluid front moves past a corner while its leak grows
+const DROPS_PER_CORNER = 3;
 
-/** A generic Archimedean spiral, center outward. Not any real lab geometry. */
-function spiralCurve() {
-  const pts = Array.from({ length: 160 }, (_, i) => {
-    const t = i / 159;
-    const a = t * TURNS * Math.PI * 2;
-    const r = 0.16 + t * 1.45;
-    return new THREE.Vector3(Math.cos(a) * r, 0.07, Math.sin(a) * r);
-  });
-  return new THREE.CatmullRomCurve3(pts);
+const FLOOR_Y = 0.021;
+const FILL_Y = 0.05;
+const WALL_TOP = 0.09;
+
+type Corner = { at: number; p: THREE.Vector2; out: THREE.Vector2 };
+type Channel = { pts: THREE.Vector2[]; cum: number[]; corners: Corner[] };
+
+function pushArc(pts: THREE.Vector2[], r0: number, r1: number, a0: number, a1: number) {
+  const n = Math.max(2, Math.ceil(((a1 - a0) * Math.max(r0, r1)) / STEP));
+  for (let i = 1; i <= n; i++) {
+    const t = i / n;
+    const a = a0 + (a1 - a0) * t;
+    const r = r0 + (r1 - r0) * t;
+    pts.push(new THREE.Vector2(Math.cos(a) * r, Math.sin(a) * r));
+  }
 }
+
+function pushLine(pts: THREE.Vector2[], to: THREE.Vector2) {
+  const from = pts[pts.length - 1];
+  const n = Math.max(1, Math.ceil(from.distanceTo(to) / STEP));
+  for (let i = 1; i <= n; i++) pts.push(from.clone().lerp(to, i / n));
+}
+
+/**
+ * Generic layouts, not the real lab geometry.
+ * Published: concentric half-circles joined by short radial steps, so the channel turns 90° twice per half-turn.
+ * Redesign: one continuous full-circle (Archimedean) spiral with no sharp turns.
+ */
+function buildChannel(mode: Mode): Channel {
+  const pts = [new THREE.Vector2(R0, 0)];
+  const cornerIdx: number[] = [];
+  if (mode === "published") {
+    for (let k = 0; k < HALVES; k++) {
+      const r = R0 + k * PITCH;
+      pushArc(pts, r, r, k * Math.PI, (k + 1) * Math.PI);
+      if (k === HALVES - 1) break;
+      cornerIdx.push(pts.length - 1);
+      const a = (k + 1) * Math.PI;
+      pushLine(pts, new THREE.Vector2(Math.cos(a) * (r + PITCH), Math.sin(a) * (r + PITCH)));
+      cornerIdx.push(pts.length - 1);
+    }
+  } else {
+    pushArc(pts, R0, R0 + HALVES * PITCH, 0, HALVES * Math.PI);
+  }
+
+  const cum = [0];
+  for (let i = 1; i < pts.length; i++) cum.push(cum[i - 1] + pts[i].distanceTo(pts[i - 1]));
+
+  // Fluid escapes on the outside of each bend: the direction of (incoming - outgoing).
+  const corners = cornerIdx.map((i) => {
+    const a = pts[i].clone().sub(pts[i - 1]).normalize();
+    const b = pts[i + 1].clone().sub(pts[i]).normalize();
+    return { at: cum[i], p: pts[i], out: a.sub(b).normalize() };
+  });
+  return { pts, cum, corners };
+}
+
+/** Left and right channel edges, mitered so the sharp corners stay sharp. */
+function edges(pts: THREE.Vector2[], width: number) {
+  const left: THREE.Vector2[] = [];
+  const right: THREE.Vector2[] = [];
+  const n = pts.length;
+  for (let i = 0; i < n; i++) {
+    const t1 = (i > 0 ? pts[i].clone().sub(pts[i - 1]) : pts[1].clone().sub(pts[0])).normalize();
+    const t2 = (i < n - 1 ? pts[i + 1].clone().sub(pts[i]) : t1.clone()).normalize();
+    const n1 = new THREE.Vector2(-t1.y, t1.x);
+    const m = n1.clone().add(new THREE.Vector2(-t2.y, t2.x)).normalize();
+    const s = width / 2 / Math.max(0.3, m.dot(n1));
+    left.push(pts[i].clone().addScaledVector(m, s));
+    right.push(pts[i].clone().addScaledVector(m, -s));
+  }
+  return { left, right };
+}
+
+/** A strip of quads between two point rows; segment i is indices [6i, 6i + 6). */
+function strip(a: THREE.Vector3[], b: THREE.Vector3[]) {
+  const pos = new Float32Array(a.length * 6);
+  a.forEach((p, i) => {
+    p.toArray(pos, i * 6);
+    b[i].toArray(pos, i * 6 + 3);
+  });
+  const idx: number[] = [];
+  for (let i = 0; i < a.length - 1; i++) {
+    const [p, q, r, s] = [2 * i, 2 * i + 1, 2 * i + 2, 2 * i + 3];
+    idx.push(p, q, r, q, s, r);
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+  g.setIndex(idx);
+  g.computeVertexNormals();
+  return g;
+}
+
+const at = (v: THREE.Vector2, y: number) => new THREE.Vector3(v.x, y, v.y);
 
 function Scene({ mode, run }: { mode: Mode; run: number }) {
   const motion = useMotionAllowed();
@@ -35,52 +120,53 @@ function Scene({ mode, run }: { mode: Mode; run: number }) {
   const colors = useMemo(
     () => ({
       patch: new THREE.Color(readCssColor("--surface", "#ffffff")),
-      line: new THREE.Color(readCssColor("--line", "#e4e4e0")),
+      floor: new THREE.Color(readCssColor("--line", "#e4e4e0")),
+      wall: new THREE.Color(readCssColor("--muted", "#5c6370")),
       accent: new THREE.Color(readCssColor("--accent", "#3b5bdb")),
       warn: new THREE.Color(readCssColor("--warn", "#e8590c")),
     }),
     [],
   );
 
-  const { channel, fill, leakPoint, outward } = useMemo(() => {
-    const c = spiralCurve();
-    const leak = c.getPointAt(LEAK_AT);
+  const { channel, floor, walls, fill } = useMemo(() => {
+    const ch = buildChannel(mode);
+    const outer = edges(ch.pts, WIDTH);
+    const inner = edges(ch.pts, WIDTH * 0.8);
     return {
-      channel: new THREE.TubeGeometry(c, TUBULAR, 0.07, RADIAL),
-      fill: new THREE.TubeGeometry(c, TUBULAR, 0.055, RADIAL),
-      leakPoint: leak,
-      outward: new THREE.Vector3(leak.x, 0, leak.z).normalize(),
+      channel: ch,
+      floor: strip(outer.left.map((v) => at(v, FLOOR_Y)), outer.right.map((v) => at(v, FLOOR_Y))),
+      walls: [outer.left, outer.right].map((e) => strip(e.map((v) => at(v, FLOOR_Y)), e.map((v) => at(v, WALL_TOP)))),
+      fill: strip(inner.left.map((v) => at(v, FILL_Y)), inner.right.map((v) => at(v, FILL_Y))),
     };
-  }, []);
+  }, [mode]);
   useEffect(
     () => () => {
-      channel.dispose();
-      fill.dispose();
+      [floor, fill, ...walls].forEach((g) => g.dispose());
     },
-    [channel, fill],
+    [floor, fill, walls],
   );
 
+  const total = channel.cum[channel.cum.length - 1];
+
   const apply = (t: number) => {
-    const end = mode === "redesign" ? 1 : STALL_AT;
-    const frac = Math.min(end, (t / FILL_SECONDS) * end);
-    fill.setDrawRange(0, Math.floor(frac * TUBULAR) * RADIAL * 6);
-    if (mode === "published") {
-      // Droplets grow once the front passes the leak point, then spread outward over the patch.
-      const grown = Math.max(0, Math.min(1, (frac - LEAK_AT) / (STALL_AT - LEAK_AT)));
-      drops.current.forEach((m, i) => {
-        if (!m) return;
-        const k = (i + 1) / DROPLETS;
-        const spread = 0.12 + grown * (0.15 + k * 0.5);
-        const side = (i % 2 ? 1 : -1) * k * 0.28;
-        m.position.set(
-          leakPoint.x + outward.x * spread - outward.z * side,
-          0.04,
-          leakPoint.z + outward.z * spread + outward.x * side,
-        );
-        m.scale.setScalar(grown * (1.1 - k * 0.6));
+    const front = Math.min(1, t / FILL_SECONDS) * total;
+    let seg = 0;
+    while (seg < channel.cum.length - 1 && channel.cum[seg + 1] <= front) seg++;
+    fill.setDrawRange(0, seg * 6);
+
+    // Each sharp turn starts leaking once the fluid front passes it; the puddle spreads on the outside of the bend.
+    channel.corners.forEach((c, ci) => {
+      const grown = THREE.MathUtils.clamp((front - c.at) / LEAK_TRAVEL, 0, 1);
+      for (let d = 0; d < DROPS_PER_CORNER; d++) {
+        const m = drops.current[ci * DROPS_PER_CORNER + d];
+        if (!m) continue;
+        const reach = WIDTH * 0.6 + grown * (0.05 + d * 0.07);
+        const size = grown * (0.075 - d * 0.018);
+        m.position.set(c.p.x + c.out.x * reach, FLOOR_Y + 0.005, c.p.y + c.out.y * reach);
+        m.scale.set(size, size * 0.35, size);
         m.visible = grown > 0;
-      });
-    }
+      }
+    });
   };
 
   // Restart the fill when the toggle or the replay button changes. Reduced motion jumps to the end.
@@ -97,44 +183,55 @@ function Scene({ mode, run }: { mode: Mode; run: number }) {
     apply(elapsed.current);
   });
 
+  const start = channel.pts[0];
+  const end = channel.pts[channel.pts.length - 1];
+
   return (
     <>
-      <ambientLight intensity={0.9} />
-      <directionalLight position={[2, 5, 3]} intensity={1.1} />
-      <group rotation={[0, 0.35, 0]}>
+      <ambientLight intensity={1} />
+      <directionalLight position={[2, 5, 3]} intensity={1.2} />
+      <group rotation={[0, Math.PI / 2, 0]}>
         {/* sensor patch */}
         <mesh position={[0, -0.02, 0]}>
-          <boxGeometry args={[4.2, 0.08, 4.2]} />
+          <cylinderGeometry args={[2.05, 2.05, 0.08, 72]} />
           <meshStandardMaterial color={colors.patch} />
         </mesh>
-        {/* empty channel */}
-        <mesh geometry={channel}>
-          <meshStandardMaterial color={colors.line} />
+        <mesh geometry={floor}>
+          <meshStandardMaterial color={colors.floor} side={THREE.DoubleSide} />
         </mesh>
+        {walls.map((g, i) => (
+          <mesh key={i} geometry={g}>
+            <meshStandardMaterial color={colors.wall} side={THREE.DoubleSide} />
+          </mesh>
+        ))}
         {/* liquid */}
         <mesh geometry={fill}>
+          <meshStandardMaterial color={colors.accent} side={THREE.DoubleSide} />
+        </mesh>
+        {/* inlet and outlet */}
+        <mesh position={[start.x, 0.05, start.y]}>
+          <cylinderGeometry args={[0.13, 0.13, 0.06, 24]} />
           <meshStandardMaterial color={colors.accent} />
         </mesh>
-        {/* inlet at the center */}
-        <mesh position={[0, 0.09, 0]}>
-          <cylinderGeometry args={[0.2, 0.2, 0.06, 24]} />
-          <meshStandardMaterial color={colors.accent} />
+        <mesh position={[end.x, 0.05, end.y]}>
+          <cylinderGeometry args={[0.1, 0.1, 0.06, 24]} />
+          <meshStandardMaterial color={colors.wall} />
         </mesh>
-        {mode === "published" &&
-          Array.from({ length: DROPLETS }, (_, i) => (
-            <mesh key={i} ref={(m) => void (drops.current[i] = m)} visible={false}>
-              <sphereGeometry args={[0.1, 16, 12]} />
-              <meshStandardMaterial color={colors.warn} />
-            </mesh>
-          ))}
+        {Array.from({ length: channel.corners.length * DROPS_PER_CORNER }, (_, i) => (
+          <mesh key={`${mode}-${i}`} ref={(m) => void (drops.current[i] = m)} visible={false}>
+            <sphereGeometry args={[1, 16, 10]} />
+            <meshStandardMaterial color={colors.warn} />
+          </mesh>
+        ))}
       </group>
     </>
   );
 }
 
 const DESCRIPTION: Record<Mode, string> = {
-  published: "Published design: fluid fills the spiral from the center, then droplets escape through the channel wall and the fill stalls.",
-  redesign: "My redesign: the channel stays sealed and fluid fills the whole spiral from the center outward.",
+  published:
+    "Published design: half-circle loops joined by sharp turns. As fluid fills from the center, it leaks out at each sharp turn between loops.",
+  redesign: "My redesign: one smooth full-circle spiral with no sharp turns. Fluid flows cleanly from the center to the outlet.",
 };
 
 export default function SpiralSensorDemo({ active }: { active: boolean }) {
@@ -148,7 +245,7 @@ export default function SpiralSensorDemo({ active }: { active: boolean }) {
           <CanvasShell
             label={`Stylized 3D sensor patch with a spiral microfluidic channel. ${DESCRIPTION[mode]}`}
             className="h-full w-full"
-            camera={{ position: [0, 4.6, 3.4], fov: 40 }}
+            camera={{ position: [0, 5.4, 2.4], fov: 40 }}
           >
             <Scene mode={mode} run={run} />
           </CanvasShell>
