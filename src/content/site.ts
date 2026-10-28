@@ -30,8 +30,7 @@ export const organizations = [
   { org: "Terra Labs", role: "Electrical Engineer / Programmer", tag: "Robotics", href: "https://uscterralabs.com" },
   { org: "Cyborg", role: "General member", tag: "Cyber", href: "https://usccyb.org" },
   { org: "Cyborg Consulting", role: "Consultant", tag: "Cyber", href: "https://usccyb.org/consulting/" },
-  // No public site found for TACTICS, so its card stays unlinked.
-  { org: "TACTICS", role: "General member", tag: "Cyber" },
+  { org: "TACTICS", role: "General member", tag: "Cyber", href: "https://usctactics.org" },
   { org: "HackSC", role: "Product Manager / Backend Developer", tag: "Software", href: "https://hacksc.com" },
 ] as { org: string; role: string; tag: string; href?: string }[];
 
