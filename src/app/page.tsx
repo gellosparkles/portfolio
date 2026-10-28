@@ -2,7 +2,7 @@ import Link from "next/link";
 import { NeuralHero } from "@/components/three/lazy";
 import { DemoCard } from "@/components/demos/DemoCard";
 import { Section } from "@/components/Section";
-import { certifications, education, experience, honors, interests, publications, site, skills, stats } from "@/content/site";
+import { certifications, education, experience, honors, interests, organizations, publications, site, skills, stats } from "@/content/site";
 import { projects } from "@/content/projects";
 import { ProjectBody, ProjectDemoCard } from "@/components/ProjectCard";
 
@@ -89,6 +89,20 @@ export default function Home() {
             ),
           )}
         </div>
+      </Section>
+
+      <Section id="organizations" title="Organizations">
+        <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {organizations.map((o) => (
+            <li key={o.org} className="flex items-start justify-between gap-3 rounded-xl border border-line bg-surface px-4 py-3">
+              <div className="min-w-0">
+                <p className="font-medium">{o.org}</p>
+                <p className="text-sm text-muted">{o.role}</p>
+              </div>
+              <span className="shrink-0 rounded-full border border-line px-2.5 py-0.5 text-xs text-accent">{o.tag}</span>
+            </li>
+          ))}
+        </ul>
       </Section>
 
       <Section id="research" title="Research">

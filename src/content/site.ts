@@ -30,6 +30,15 @@ export const stats = [
   { value: "5", label: "organizations: robotics · cyber · software" },
 ];
 
+// Organizations row; the count must match the "5 organizations" stat.
+export const organizations = [
+  { org: "Terra Labs", role: "Electrical Engineer / Programmer", tag: "Robotics" },
+  { org: "Cyborg", role: "General member", tag: "Cyber" },
+  { org: "Cyborg Consulting", role: "Consultant", tag: "Cyber" },
+  { org: "TACTICS", role: "General member", tag: "Cyber" },
+  { org: "HackSC", role: "Product Manager / Backend Developer", tag: "Software" },
+];
+
 export const education = {
   school: "University of Southern California, Viterbi School of Engineering",
   degree: "B.S. Electrical and Computer Engineering",
