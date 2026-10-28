@@ -16,53 +16,51 @@ import CanvasShell, {
 
 type Mode = "pointer" | "sliders";
 
-const JOINTS = 7; // joint 0 is the base yaw; joints 1–6 pitch in the arm's vertical plane
-const LINK = 0.55;
-const BASE_Y = 0.3;
-const PITCH_LIMIT = 1.2; // rad, per joint
-const REST: number[] = [0, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25];
+// Tether's chain alternates roll (Z) and pitch (Y) joints: Z-Y-Z-Y-Z-Y-Z. Even indices are the
+// four small roll motors, coaxial with the link; odd indices are the three big pitch motors.
+const JOINTS = 7;
+const PITCH = [1, 3, 5];
+const isRoll = (i: number) => i % 2 === 0;
+const LIMIT = [Math.PI, Math.PI / 2, Math.PI, 1.92, Math.PI, 1.92, Math.PI]; // rad
+const REST: number[] = [0, 0.5, 0, 0.6, 0, 0.5, 0];
 
-// Motor groups share a driver: shoulder (0–1), elbow (2–4), wrist (5–6).
-const GROUP_OF = [0, 0, 1, 1, 1, 2, 2];
-const GROUPS = [
-  { name: "Shoulder", joints: "J1–J2" },
-  { name: "Elbow", joints: "J3–J5" },
-  { name: "Wrist", joints: "J6–J7" },
-];
+const BASE_Y = 0.25; // dock height
+const R2P = 0.5; // roll pivot to the next pitch axis
+const P2R = 0.22; // pitch axis to the next roll pivot
+const WRIST = 0.36; // last roll pivot to the claw tip
+const OFFSET = 0.06; // each pitch motor's output sits slightly to one side
+const SEG = [P2R + R2P, P2R + R2P, P2R + WRIST]; // planar link after each pitch joint
+const H0 = BASE_Y + R2P; // height of the first pitch axis
 
 const clamp = (v: number, lo: number, hi: number) =>
   Math.max(lo, Math.min(hi, v));
 
-/** Tip position in the arm's vertical plane (r outward, y up) for relative pitch angles pitch[1..6]. */
-function planarTip(angles: number[]) {
+/**
+ * Point after the first n planar links (r outward, y up). With the middle rolls at zero every
+ * pitch axis is parallel, so the arm bends in one vertical plane.
+ */
+function planarPoint(angles: number[], n: number) {
   let r = 0;
-  let y = BASE_Y;
+  let y = H0;
   let phi = 0;
-  for (let i = 1; i < JOINTS; i++) {
-    phi += angles[i];
-    r += Math.sin(phi) * LINK;
-    y += Math.cos(phi) * LINK;
+  for (let k = 0; k < n; k++) {
+    phi += angles[PITCH[k]];
+    r += Math.sin(phi) * SEG[k];
+    y += Math.cos(phi) * SEG[k];
   }
   return { r, y };
 }
 
-/** One cyclic-coordinate-descent sweep: rotate each pitch joint, tip-ward last, so the tip nears (tr, ty). */
+/** One cyclic-coordinate-descent sweep over the pitch joints, tip-ward first, toward (tr, ty). */
 function ccdSweep(angles: number[], tr: number, ty: number) {
-  for (let j = JOINTS - 1; j >= 1; j--) {
-    // Pivot of joint j: base plus the links before it.
-    let r = 0;
-    let y = BASE_Y;
-    let phi = 0;
-    for (let i = 1; i < j; i++) {
-      phi += angles[i];
-      r += Math.sin(phi) * LINK;
-      y += Math.cos(phi) * LINK;
-    }
-    const tip = planarTip(angles);
+  for (let k = PITCH.length - 1; k >= 0; k--) {
+    const pivot = planarPoint(angles, k);
+    const tip = planarPoint(angles, PITCH.length);
     // Angle of each direction measured from vertical, the same convention as phi.
-    const a = Math.atan2(tip.r - r, tip.y - y);
-    const b = Math.atan2(tr - r, ty - y);
-    angles[j] = clamp(angles[j] + (b - a), -PITCH_LIMIT, PITCH_LIMIT);
+    const a = Math.atan2(tip.r - pivot.r, tip.y - pivot.y);
+    const b = Math.atan2(tr - pivot.r, ty - pivot.y);
+    const j = PITCH[k];
+    angles[j] = clamp(angles[j] + (b - a), -LIMIT[j], LIMIT[j]);
   }
 }
 
@@ -86,13 +84,11 @@ function Scene({
 
   const colors = useMemo(
     () => ({
-      groups: [
-        new THREE.Color(readCssColor("--accent", "#3b5bdb")),
-        new THREE.Color(readCssColor("--warn", "#e8590c")),
-        new THREE.Color(readCssColor("--fg", "#16181d")),
-      ],
-      link: new THREE.Color(readCssColor("--muted", "#5c6370")),
-      floor: new THREE.Color(readCssColor("--line", "#e4e4e0")),
+      big: new THREE.Color(readCssColor("--accent", "#2f6b4f")),
+      small: new THREE.Color(readCssColor("--warn", "#d9583a")),
+      hub: new THREE.Color(readCssColor("--fg", "#151513")),
+      link: new THREE.Color(readCssColor("--muted", "#6a6961")),
+      floor: new THREE.Color(readCssColor("--line", "#d3d1c8")),
     }),
     [],
   );
@@ -100,20 +96,22 @@ function Scene({
   const apply = () => {
     joints.current.forEach((g, i) => {
       if (!g) return;
-      if (i === 0) g.rotation.y = angles.current[0];
+      if (isRoll(i)) g.rotation.y = angles.current[i];
       else g.rotation.z = -angles.current[i];
     });
   };
 
-  // Pointer mode: map the pointer to a reach point in front of the base and solve toward it.
+  // Pointer mode: J1 rolls the arm's plane toward the pointer, the big pitch motors reach for it.
   const solve = (sweeps: number) => {
     const t = target.current;
-    const x = t.x * 2.4;
-    const z = 1.2;
-    const ty = BASE_Y + 0.2 + ((t.y + 1) / 2) * 3.2;
-    angles.current[0] = Math.atan2(x, z);
+    const x = t.x * 1.8;
+    const z = 1.0;
+    const a = angles.current;
+    a[0] = Math.atan2(-z, x);
+    a[2] = a[4] = a[6] = 0;
     const tr = Math.hypot(x, z);
-    for (let k = 0; k < sweeps; k++) ccdSweep(angles.current, tr, ty);
+    const ty = 0.3 + ((t.y + 1) / 2) * 2.4;
+    for (let k = 0; k < sweeps; k++) ccdSweep(a, tr, ty);
   };
 
   useEffect(() => {
@@ -130,57 +128,101 @@ function Scene({
     apply();
   });
 
-  const link = () => (
-    <mesh position={[0, LINK / 2, 0]}>
-      <cylinderGeometry args={[0.07, 0.07, LINK, 12]} />
+  const tube = (length: number, z = 0) => (
+    <mesh position={[0, length / 2, z]}>
+      <cylinderGeometry args={[0.045, 0.045, length, 12]} />
       <meshStandardMaterial color={colors.link} />
     </mesh>
   );
 
-  // Nested groups: each joint sits at the end of the previous link, so rotation composes like real FK.
-  const chain = (i: number): React.ReactNode => (
-    <group
-      key={i}
-      ref={(g) => void (joints.current[i] = g)}
-      position={i <= 1 ? [0, i === 0 ? BASE_Y : 0, 0] : [0, LINK, 0]}
-    >
-      <mesh>
-        <sphereGeometry args={[0.13, 16, 12]} />
-        <meshStandardMaterial color={colors.groups[GROUP_OF[i]]} />
+  const claw = (
+    <>
+      <mesh position={[0, 0.22, 0]}>
+        <boxGeometry args={[0.24, 0.05, 0.1]} />
+        <meshStandardMaterial color={colors.link} />
       </mesh>
-      {i >= 1 && link()}
-      {i === 0 ? (
-        chain(1)
-      ) : i < JOINTS - 1 ? (
-        chain(i + 1)
-      ) : (
-        <mesh position={[0, LINK, 0]}>
-          <sphereGeometry args={[0.1, 16, 12]} />
-          <meshStandardMaterial color={colors.groups[2]} />
+      {[-1, 1].map((s) => (
+        <mesh key={s} position={[s * 0.09, 0.3, 0]}>
+          <boxGeometry args={[0.04, 0.13, 0.08]} />
+          <meshStandardMaterial color={colors.hub} />
         </mesh>
-      )}
-    </group>
+      ))}
+    </>
   );
 
+  // Nested groups: each joint sits on the previous one's output, so rotation composes like real FK.
+  const joint = (i: number): React.ReactNode => {
+    const ref = (g: THREE.Group | null) => void (joints.current[i] = g);
+    if (isRoll(i)) {
+      const side = i === 0 ? 0 : i % 4 === 2 ? OFFSET : -OFFSET;
+      return (
+        <group
+          key={i}
+          ref={ref}
+          position={i === 0 ? [0, BASE_Y, 0] : [0, P2R, side]}
+        >
+          <mesh position={[0, 0.08, 0]}>
+            <cylinderGeometry args={[0.1, 0.1, 0.16, 20]} />
+            <meshStandardMaterial color={colors.small} />
+          </mesh>
+          {i < JOINTS - 1 ? (
+            <>
+              {tube(R2P)}
+              {joint(i + 1)}
+            </>
+          ) : (
+            claw
+          )}
+        </group>
+      );
+    }
+    return (
+      <group key={i} ref={ref} position={[0, R2P, 0]}>
+        <mesh rotation={[Math.PI / 2, 0, 0]}>
+          <cylinderGeometry args={[0.15, 0.15, 0.2, 28]} />
+          <meshStandardMaterial color={colors.big} />
+        </mesh>
+        <mesh rotation={[Math.PI / 2, 0, 0]}>
+          <cylinderGeometry args={[0.06, 0.06, 0.22, 16]} />
+          <meshStandardMaterial color={colors.hub} />
+        </mesh>
+        {tube(P2R, i % 4 === 1 ? OFFSET : -OFFSET)}
+        {joint(i + 1)}
+      </group>
+    );
+  };
+
   return (
-    <>
+    // The camera looks at the origin, so drop the arm until its middle sits there.
+    <group position={[0, -1.3, 0]}>
       <ambientLight intensity={0.9} />
       <directionalLight position={[2, 5, 3]} intensity={1.1} />
       <mesh position={[0, -0.05, 0]}>
         <cylinderGeometry args={[1.1, 1.2, 0.1, 40]} />
         <meshStandardMaterial color={colors.floor} />
       </mesh>
-      <mesh position={[0, 0.15, 0]}>
-        <cylinderGeometry args={[0.28, 0.34, 0.3, 24]} />
+      {/* Circular dock the arm anchors in. */}
+      <mesh position={[0, BASE_Y / 2, 0]}>
+        <cylinderGeometry args={[0.32, 0.36, BASE_Y, 32]} />
         <meshStandardMaterial color={colors.link} />
       </mesh>
-      {chain(0)}
-    </>
+      <mesh position={[0, BASE_Y, 0]} rotation={[Math.PI / 2, 0, 0]}>
+        <torusGeometry args={[0.28, 0.035, 10, 40]} />
+        <meshStandardMaterial color={colors.hub} />
+      </mesh>
+      {joint(0)}
+    </group>
   );
 }
 
-const SLIDER_LABELS = ["J1 base yaw", "J2", "J3", "J4", "J5", "J6", "J7"];
-const SWATCH = ["bg-accent", "bg-warn", "bg-fg"];
+const SLIDER_LABELS = Array.from(
+  { length: JOINTS },
+  (_, i) => `J${i + 1} ${isRoll(i) ? "roll" : "pitch"}`,
+);
+const LEGEND = [
+  { name: "Big motors", joints: "3 pitch", swatch: "bg-accent" },
+  { name: "Small motors", joints: "4 roll", swatch: "bg-warn" },
+];
 
 export default function TetherArmDemo({
   active,
@@ -206,8 +248,8 @@ export default function TetherArmDemo({
 
   const summary =
     mode === "pointer"
-      ? "Move the pointer over the arm and its seven joints bend to reach it."
-      : "Drag the sliders to set each of the seven joint angles.";
+      ? "Move the pointer: the first roll motor turns the arm toward it and the three pitch motors bend to reach it."
+      : "Drag the sliders to set each joint. Roll joints spin the chain about its length, pitch joints bend it.";
 
   return (
     <div>
@@ -218,9 +260,9 @@ export default function TetherArmDemo({
       >
         {active ? (
           <CanvasShell
-            label={`Made-up 3D model of a seven-joint robot arm standing in for Tether. Joints are colored by motor group: shoulder, elbow and wrist. ${summary}`}
+            label={`3D model of Tether's seven-joint chain: four small roll motors alternate with three big pitch motors, from the dock to the claw. ${summary}`}
             className="h-full w-full"
-            camera={{ position: [0, 2.2, 6.2], fov: 40 }}
+            camera={{ position: [0, 0.8, 5], fov: 40 }}
           >
             <Scene
               mode={mode}
@@ -253,10 +295,10 @@ export default function TetherArmDemo({
               ))}
             </div>
             <ul className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted">
-              {GROUPS.map((g, i) => (
+              {LEGEND.map((g) => (
                 <li key={g.name} className="inline-flex items-center gap-1.5">
                   <span
-                    className={`h-2.5 w-2.5 rounded-full ${SWATCH[i]}`}
+                    className={`h-2.5 w-2.5 rounded-full ${g.swatch}`}
                     aria-hidden
                   />
                   {g.name} ({g.joints})
@@ -267,33 +309,28 @@ export default function TetherArmDemo({
 
           {mode === "sliders" && (
             <div className="mt-3 grid max-w-xl grid-cols-1 gap-x-6 gap-y-1 sm:grid-cols-2">
-              {SLIDER_LABELS.map((label, i) => {
-                const lim = i === 0 ? Math.PI / 2 : PITCH_LIMIT;
-                return (
-                  <label
-                    key={label}
-                    className="flex items-center gap-2 text-xs text-muted"
-                  >
-                    <span className="w-20 shrink-0">{label}</span>
-                    <input
-                      type="range"
-                      min={-lim}
-                      max={lim}
-                      step={0.02}
-                      value={sliders[i]}
-                      onChange={(e) =>
-                        setSliders((s) =>
-                          s.map((v, k) =>
-                            k === i ? Number(e.target.value) : v,
-                          ),
-                        )
-                      }
-                      aria-label={`${label} angle`}
-                      className="min-w-0 flex-1 accent-accent"
-                    />
-                  </label>
-                );
-              })}
+              {SLIDER_LABELS.map((label, i) => (
+                <label
+                  key={label}
+                  className="flex items-center gap-2 text-xs text-muted"
+                >
+                  <span className="w-16 shrink-0">{label}</span>
+                  <input
+                    type="range"
+                    min={-LIMIT[i]}
+                    max={LIMIT[i]}
+                    step={0.02}
+                    value={sliders[i]}
+                    onChange={(e) =>
+                      setSliders((s) =>
+                        s.map((v, k) => (k === i ? Number(e.target.value) : v)),
+                      )
+                    }
+                    aria-label={`${label} angle`}
+                    className="min-w-0 flex-1 accent-accent"
+                  />
+                </label>
+              ))}
             </div>
           )}
 
@@ -301,7 +338,8 @@ export default function TetherArmDemo({
             {summary}
           </p>
           <p className="mt-1 text-xs text-muted">
-            Made-up arm standing in for the real model. Project:{" "}
+            Joint layout matches the real arm (Z-Y-Z-Y-Z-Y-Z); proportions are
+            approximate. Project:{" "}
             <a
               href="https://uscterralabs.com"
               target="_blank"
