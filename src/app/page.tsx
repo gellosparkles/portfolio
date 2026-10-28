@@ -11,6 +11,9 @@ const slide = { "nav-forward": "nav-forward", "nav-back": "nav-back", default: "
 // Case studies with their own pages (the cell-filament tool lives on the rail instead).
 const caseStudies = projects.filter((p) => !p.demo);
 
+// Organization tags in the site palette: robotics orange, cyber turquoise, software purple.
+const tagColor: Record<string, string> = { Robotics: "var(--robotics)", Cyber: "var(--cyber)", Software: "var(--software)" };
+
 function Heading({ id, n, title }: { id: string; n: string; title: string }) {
   return (
     <div id={id} className="mx-auto flex max-w-5xl scroll-mt-16 items-baseline gap-4 border-t border-line px-4 pt-6 sm:px-6">
@@ -129,12 +132,14 @@ export default function Home() {
           <Heading id="organizations" n="03" title="Organizations" />
           <ul className="mx-auto mt-6 grid max-w-5xl gap-px px-4 sm:grid-cols-2 sm:px-6 lg:grid-cols-3">
             {organizations.map((o) => (
-              <li key={o.org} className="flex items-baseline justify-between gap-3 border-b border-line py-3">
+              <li key={o.org} className="flex items-center justify-between gap-3 border-b border-line py-3">
                 <span>
                   <span className="font-medium">{o.org}</span>
                   <span className="block text-xs text-muted">{o.role}</span>
                 </span>
-                <span className="label shrink-0">{o.tag}</span>
+                <span className="label shrink-0 rounded-full border px-2 py-0.5" style={{ color: tagColor[o.tag], borderColor: tagColor[o.tag] }}>
+                  {o.tag}
+                </span>
               </li>
             ))}
           </ul>

@@ -12,6 +12,9 @@
   --warn: #d9583a;
   --sage: #a9c7ad;
   --coral: #f0a58c;
+  --robotics: #d9583a;
+  --cyber: #1f8a86;
+  --software: #7a55c4;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -26,6 +29,9 @@
     --warn: #ff8a6b;
     --sage: #2f4a38;
     --coral: #5a3125;
+    --robotics: #ff8a6b;
+    --cyber: #5fd0c8;
+    --software: #b59bf0;
   }
 }
 

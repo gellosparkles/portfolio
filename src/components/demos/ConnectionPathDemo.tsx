@@ -40,8 +40,8 @@ export default function ConnectionPathDemo({ active }: { active: boolean }) {
   }, [active, reduced, mode]);
 
   return (
-    <div>
-      <div role="group" aria-label="Connection type" className="mb-3 flex flex-wrap gap-2 text-sm">
+    <div className="mx-auto max-w-4xl">
+      <div role="group" aria-label="Connection type" className="mb-3 flex flex-wrap justify-center gap-2 text-sm">
         {(Object.keys(MODES) as Mode[]).map((m) => (
           <button
             key={m}
@@ -59,12 +59,13 @@ export default function ConnectionPathDemo({ active }: { active: boolean }) {
         ))}
       </div>
 
+      <div className="grid items-center gap-6 md:grid-cols-[1.2fr_1fr]">
       <svg
         ref={svg}
         viewBox="0 0 480 220"
         role="img"
         aria-label={`Diagram: Raspberry Pi 5 to browser, ${relayed ? "relayed through a TURN server" : "direct through NAT using STUN"}.`}
-        className="h-auto w-full max-w-xl text-fg"
+        className="h-auto w-full text-fg"
       >
         {/* STUN: both peers learn their public address (always used, drawn faint) */}
         <g className="stroke-muted" strokeWidth="1" strokeDasharray="3 4" fill="none" opacity={relayed ? 0.25 : 0.6}>
@@ -92,8 +93,10 @@ export default function ConnectionPathDemo({ active }: { active: boolean }) {
             </circle>
           ))}
       </svg>
+      <Viewer relayed={relayed} active={active} reduced={reduced} />
+      </div>
 
-      <p aria-live="polite" className="mt-3 text-sm leading-relaxed text-muted">
+      <p aria-live="polite" className="mt-3 text-center text-sm leading-relaxed text-muted">
         {caption}
       </p>
     </div>
@@ -116,5 +119,95 @@ function Node({ x, y, label, accent }: { x: number; y: number; label: string; ac
         {label}
       </text>
     </g>
+  );
+}
+
+/** Mock of the browser page a user opens to watch the Pi's webcam. The "video" is a drawn scene, not a real feed. */
+function Viewer({ relayed, active, reduced }: { relayed: boolean; active: boolean; reduced: boolean }) {
+  const [stopped, setStopped] = useState(false);
+  const [readyFor, setReadyFor] = useState<boolean | null>(null);
+  const [now, setNow] = useState(() => new Date());
+  const scene = useRef<SVGSVGElement>(null);
+
+  // Negotiate again whenever the path changes; "connecting" lasts until the timer marks this path ready.
+  useEffect(() => {
+    const t = setTimeout(() => setReadyFor(relayed), reduced ? 0 : 1100);
+    return () => clearTimeout(t);
+  }, [relayed, reduced]);
+  const state = stopped ? "idle" : readyFor === relayed ? "live" : "connecting";
+
+  const live = state === "live";
+  useEffect(() => {
+    if (!live || !active) return;
+    const t = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(t);
+  }, [live, active]);
+
+  useEffect(() => {
+    const el = scene.current;
+    if (!el) return;
+    if (live && active && !reduced) el.unpauseAnimations();
+    else el.pauseAnimations();
+  }, [live, active, reduced]);
+
+  const toggle = () => setStopped((s) => !s);
+
+  return (
+    <div className="overflow-hidden rounded-xl border border-line bg-surface shadow-sm">
+      <div className="flex items-center gap-2 border-b border-line px-3 py-2">
+        <span className="flex gap-1" aria-hidden>
+          {[0, 1, 2].map((i) => (
+            <span key={i} className="h-2 w-2 rounded-full bg-line" />
+          ))}
+        </span>
+        <span className="flex-1 truncate rounded-md bg-bg px-2 py-0.5 font-mono text-[11px] text-muted">pi-cam.example/view</span>
+      </div>
+
+      <div className="relative aspect-video bg-[#101418]">
+        <svg ref={scene} viewBox="0 0 320 180" className="absolute inset-0 h-full w-full" aria-hidden>
+          {/* a window with a passing cloud, a desk and a plant */}
+          <rect x="190" y="22" width="100" height="78" rx="3" fill="#2b3a4a" />
+          <g opacity="0.8">
+            <ellipse cx="0" cy="48" rx="16" ry="7" fill="#c9d4de">
+              <animateTransform attributeName="transform" type="translate" from="180 0" to="310 0" dur="14s" repeatCount="indefinite" />
+            </ellipse>
+          </g>
+          <rect x="188" y="20" width="104" height="82" rx="4" fill="none" stroke="#3a4450" strokeWidth="4" />
+          <line x1="240" y1="20" x2="240" y2="102" stroke="#3a4450" strokeWidth="3" />
+          <rect x="0" y="128" width="320" height="52" fill="#262019" />
+          <rect x="44" y="104" width="22" height="24" rx="3" fill="#7a4a32" />
+          <path d="M55,104 Q40,80 48,66 M55,104 Q58,76 70,70 M55,104 Q66,90 80,88" stroke="#4f7a4a" strokeWidth="5" fill="none" strokeLinecap="round" />
+          <rect x="110" y="112" width="60" height="16" rx="2" fill="#3a3f46" />
+          <circle cx="160" cy="120" r="2" fill="#4ade80">
+            <animate attributeName="opacity" values="1;0.2;1" dur="1.6s" repeatCount="indefinite" />
+          </circle>
+        </svg>
+
+        {state !== "live" && (
+          <div className="absolute inset-0 grid place-items-center bg-[#101418]/85 font-mono text-xs text-[#c9d4de]">
+            {state === "connecting" ? "Connecting… gathering ICE candidates" : "Stream stopped"}
+          </div>
+        )}
+        {live && (
+          <>
+            <span className="absolute left-2 top-2 rounded bg-[#dc2626] px-1.5 py-0.5 font-mono text-[10px] font-semibold text-white">● LIVE</span>
+            <span className="absolute bottom-2 right-2 rounded bg-black/50 px-1.5 py-0.5 font-mono text-[10px] text-white">
+              {now.toLocaleTimeString([], { hour12: false })}
+            </span>
+          </>
+        )}
+      </div>
+
+      <div className="flex flex-wrap items-center justify-between gap-2 px-3 py-2 text-xs">
+        <span className="flex items-center gap-1.5 text-muted">
+          <span className={`h-2 w-2 rounded-full ${live ? (relayed ? "bg-warn" : "bg-accent") : "bg-line"}`} />
+          {live ? (relayed ? "Relayed via TURN" : "Peer-to-peer, direct") : state === "connecting" ? "Negotiating" : "Disconnected"}
+        </span>
+        <span className="font-mono text-muted">Pi 5 · USB webcam</span>
+        <button type="button" onClick={toggle} disabled={state === "connecting"} className="rounded-full border border-line px-2.5 py-0.5 hover:border-accent disabled:opacity-50">
+          {state === "idle" ? "Connect" : "Disconnect"}
+        </button>
+      </div>
+    </div>
   );
 }

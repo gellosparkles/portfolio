@@ -34,10 +34,10 @@ export const projects: Project[] = [
     slug: "cell-filament-tool",
     demo: "cell-filament",
     title: "Cell-Filament Counting Tool",
-    kicker: "Side project · AI agents for bio-research",
+    kicker: "AI workshop · bio-research labs",
     summary:
       "Counts which cells contain CTPS filaments using CellProfiler plus a small ML model, and was built with AI coding agents.",
-    metric: { value: "0.19 → 0.79", label: "agreement with human counts" },
-    tags: ["138 images", "421 training cells", "Presented to 2 biology labs in Taiwan"],
+    metric: { value: "2", label: "university labs trained" },
+    tags: ["Hosted AI workshop", "2 university bio-research labs", "Grad students + professors", "Live demo built with AI agents"],
   },
 ];

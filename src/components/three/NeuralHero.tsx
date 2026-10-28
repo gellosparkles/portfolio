@@ -81,14 +81,39 @@ function Network() {
   const accent = useMemo(() => new THREE.Color(readCssColor("--accent", "#3b5bdb")), []);
   const muted = useMemo(() => new THREE.Color(readCssColor("--muted", "#5c6370")), []);
   const sim = useRef<{ pulses: Pulse[]; glow: Float32Array } | null>(null);
+  const hovering = useRef(false);
+  const el = useThree((s) => s.gl.domElement);
+  const invalidate = useThree((s) => s.invalidate);
+
+  // Only turn while the pointer is over the canvas; leaving it eases back to the rest pose.
+  useEffect(() => {
+    const enter = () => void (hovering.current = true);
+    const move = () => invalidate();
+    const leave = () => {
+      hovering.current = false;
+      invalidate();
+    };
+    el.addEventListener("pointerenter", enter);
+    el.addEventListener("pointerleave", leave);
+    el.addEventListener("pointermove", move);
+    return () => {
+      el.removeEventListener("pointermove", move);
+      el.removeEventListener("pointerenter", enter);
+      el.removeEventListener("pointerleave", leave);
+    };
+  }, [el, invalidate]);
 
   useFrame((state, dt) => {
     const d = Math.min(dt, 0.05);
     if (group.current) {
-      const targetY = state.pointer.x * 0.45 + (motion ? state.clock.elapsedTime * 0.08 : 0);
-      const targetX = -state.pointer.y * 0.25;
-      group.current.rotation.y += (targetY - group.current.rotation.y) * 0.05;
-      group.current.rotation.x += (targetX - group.current.rotation.x) * 0.05;
+      const on = hovering.current;
+      const targetY = on ? state.pointer.x * 0.45 : 0;
+      const targetX = on ? -state.pointer.y * 0.25 : 0;
+      const r = group.current.rotation;
+      r.y += (targetY - r.y) * 0.08;
+      r.x += (targetX - r.x) * 0.08;
+      // Demand frameloop (reduced motion) keeps drawing until the ease settles.
+      if (Math.abs(targetY - r.y) + Math.abs(targetX - r.x) > 1e-3) state.invalidate();
     }
 
     sim.current ??= { pulses: Array.from({ length: PULSES }, newPulse), glow: new Float32Array(nodes.length) };
@@ -179,7 +204,7 @@ export default function NeuralHero({ className }: { className?: string }) {
   return (
     <CanvasShell
       className={className}
-      label="Animated neural network: video frames flow through MobileNet features and a GRU into five gesture classes. It turns to follow your pointer."
+      label="Animated neural network: video frames flow through MobileNet features and a GRU into five gesture classes. It turns to follow your pointer while you hover over it."
       camera={{ position: [0, 0.4, 7.2], fov: 45 }}
     >
       <FitCamera />

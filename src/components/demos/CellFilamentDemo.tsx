@@ -41,12 +41,12 @@ export default function CellFilamentDemo() {
   const pct = Math.round((flagged / CELLS.length) * 100);
 
   return (
-    <div>
+    <div className="mx-auto max-w-xl">
       <svg
         viewBox="0 0 410 210"
         role="img"
         aria-label={`Made-up fluorescence image of ${CELLS.length} cells. ${flagged} are scored as containing filaments at threshold ${threshold.toFixed(2)}.`}
-        className="h-auto w-full max-w-xl rounded-xl bg-[#0b1220]"
+        className="h-auto w-full rounded-xl bg-[#0b1220]"
       >
         {CELLS.map((c, i) => {
           const hit = c.score >= threshold;

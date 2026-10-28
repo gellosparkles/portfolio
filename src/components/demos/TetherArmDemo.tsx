@@ -252,11 +252,11 @@ export default function TetherArmDemo({
       : "Drag the sliders to set each joint. Roll joints spin the chain about its length, pitch joints bend it.";
 
   return (
-    <div>
+    <div className="mx-auto max-w-xl">
       <div
         onPointerMove={onPointer}
         onPointerDown={onPointer}
-        className="relative aspect-[4/3] w-full max-w-xl touch-pan-y overflow-hidden rounded-xl border border-line bg-bg"
+        className="relative aspect-[4/3] w-full touch-pan-y overflow-hidden rounded-xl border border-line bg-bg"
       >
         {active ? (
           <CanvasShell
@@ -308,7 +308,7 @@ export default function TetherArmDemo({
           </div>
 
           {mode === "sliders" && (
-            <div className="mt-3 grid max-w-xl grid-cols-1 gap-x-6 gap-y-1 sm:grid-cols-2">
+            <div className="mt-3 grid grid-cols-1 gap-x-6 gap-y-1 sm:grid-cols-2">
               {SLIDER_LABELS.map((label, i) => (
                 <label
                   key={label}

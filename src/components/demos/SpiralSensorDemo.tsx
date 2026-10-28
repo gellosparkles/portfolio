@@ -264,14 +264,6 @@ function Scene({ mode, run }: { mode: Mode; run: number }) {
           <cylinderGeometry args={[0.1, 0.1, 0.06, 24]} />
           <meshStandardMaterial color={colors.wall} />
         </mesh>
-        {/* sensing electrodes under the arches, as in the paper's figure */}
-        {mode === "published" &&
-          [-0.5, 0.5].map((x) => (
-            <mesh key={x} position={[x, 0.03, -1.05]}>
-              <boxGeometry args={[0.55, 0.04, 0.32]} />
-              <meshStandardMaterial color={colors.wall} />
-            </mesh>
-          ))}
         {Array.from(
           { length: channel.corners.length * DROPS_PER_CORNER },
           (_, i) => (
@@ -308,8 +300,8 @@ export default function SpiralSensorDemo({
   const [run, setRun] = useState(0);
 
   return (
-    <div>
-      <div className="relative aspect-[4/3] w-full max-w-xl overflow-hidden rounded-xl border border-line bg-bg">
+    <div className="mx-auto max-w-xl">
+      <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl border border-line bg-bg">
         {active ? (
           <CanvasShell
             label={`Stylized 3D sensor patch with a spiral microfluidic channel. ${DESCRIPTION[mode]}`}
