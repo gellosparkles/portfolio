@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { NeuralHero } from "@/components/three/lazy";
+import { DemoCard } from "@/components/demos/DemoCard";
 import { Section } from "@/components/Section";
 import { certifications, education, experience, honors, interests, publications, site, skills, stats } from "@/content/site";
 import { projects } from "@/content/projects";
@@ -65,25 +66,7 @@ export default function Home() {
       <Section id="experience" title="Experience">
         <ol className="relative space-y-8 border-l border-line pl-6">
           {experience.map((e) => (
-            <li key={e.org + e.role} className="relative">
-              <span className="absolute -left-[29px] top-2 h-2.5 w-2.5 rounded-full border-2 border-bg bg-accent" />
-              <div className="flex flex-wrap items-baseline justify-between gap-x-4">
-                <h3 className="font-semibold">
-                  {e.role} <span className="font-normal text-muted">· {e.org}</span>
-                </h3>
-                <p className="font-mono text-xs text-muted">
-                  {e.when} · {e.where}
-                </p>
-              </div>
-              <p className="mt-2 text-sm leading-relaxed text-muted">{e.summary}</p>
-              <ul className="mt-3 flex flex-wrap gap-1.5">
-                {e.chips.map((t) => (
-                  <li key={t} className="rounded-full border border-line px-2.5 py-0.5 text-xs">
-                    {t}
-                  </li>
-                ))}
-              </ul>
-            </li>
+            <DemoCard key={e.org + e.role} e={e} />
           ))}
         </ol>
       </Section>

@@ -37,6 +37,8 @@ export const education = {
   gpa: "3.85",
 };
 
+export type DemoId = "connection-path";
+
 export type Experience = {
   org: string;
   role: string;
@@ -44,6 +46,9 @@ export type Experience = {
   when: string;
   summary: string;
   chips: string[];
+  /** Live demo shown in the card; roles without one show a placeholder. */
+  demo?: DemoId;
+  link?: { label: string; href: string };
 };
 
 // Resume order. One sentence and 2–4 chips per role; the resume bullets are not reproduced.
@@ -80,6 +85,7 @@ export const experience: Experience[] = [
     when: "May 2026 – Jul 2026",
     summary: "Remote peer-to-peer webcam streaming from a Raspberry Pi 5.",
     chips: ["WebRTC", "STUN/TURN", "Raspberry Pi 5", "Ubuntu VM"],
+    demo: "connection-path",
   },
   {
     org: "Terra Labs USC",
