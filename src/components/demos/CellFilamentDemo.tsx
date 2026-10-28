@@ -68,7 +68,7 @@ export default function CellFilamentDemo() {
       </svg>
 
       <div className="mt-3 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
-        <label className="flex min-w-0 flex-1 items-center gap-3">
+        <label className="flex w-full min-w-0 items-center gap-3 sm:w-auto sm:flex-1">
           <span className="shrink-0">Model threshold</span>
           <input
             type="range"
@@ -77,7 +77,7 @@ export default function CellFilamentDemo() {
             step={0.01}
             value={threshold}
             onChange={(e) => setThreshold(Number(e.target.value))}
-            className="min-w-0 flex-1 accent-accent"
+            className="min-w-24 flex-1 accent-accent"
           />
           <span className="w-10 shrink-0 font-mono text-xs">{threshold.toFixed(2)}</span>
         </label>
