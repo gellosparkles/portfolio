@@ -12,4 +12,5 @@ export const demos: Record<DemoId, ComponentType<{ active: boolean }>> = {
   "spiral-sensor": dynamic(() => import("./SpiralSensorDemo"), { ssr: false, loading: placeholder }),
   "audit-pipeline": dynamic(() => import("./AuditPipelineDemo"), { ssr: false, loading: placeholder }),
   "connection-path": dynamic(() => import("./ConnectionPathDemo"), { ssr: false, loading: placeholder }),
+  "tether-arm": dynamic(() => import("./TetherArmDemo"), { ssr: false, loading: placeholder }),
 };

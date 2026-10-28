@@ -37,7 +37,7 @@ export const education = {
   gpa: "3.85",
 };
 
-export type DemoId = "hub-route" | "connection-path" | "audit-pipeline" | "spiral-sensor";
+export type DemoId = "hub-route" | "connection-path" | "audit-pipeline" | "spiral-sensor" | "tether-arm";
 
 export type Experience = {
   org: string;
@@ -97,6 +97,8 @@ export const experience: Experience[] = [
     when: "Sep 2026 – Present",
     summary: "Power and control for Tether, a 7-DOF robotic arm.",
     chips: ["7-DOF", "ESP32 master/slave", "3 motor groups", "ROS2"],
+    demo: "tether-arm",
+    link: { label: "uscterralabs.com", href: "https://uscterralabs.com" },
   },
   {
     org: "Chang Gung University Intelligent Control Lab",
