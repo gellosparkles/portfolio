@@ -3,11 +3,15 @@
 import { useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
-import CanvasShell, { readCssColor, useMotionAllowed } from "../three/CanvasShell";
+import CanvasShell, {
+  readCssColor,
+  useMotionAllowed,
+} from "../three/CanvasShell";
 
 type Mode = "published" | "redesign";
 
-const HALVES = 6; // half-turns in each spiral (3 full turns)
+const HALVES = 6; // half-turns in the redesign spiral (3 full turns)
+const ARCHES = 7; // half-circle arches in the published layout
 const R0 = 0.24; // radius where the channel leaves the inlet
 const PITCH = 0.24; // radius gained per half-turn
 const WIDTH = 0.15; // channel width
@@ -23,8 +27,17 @@ const WALL_TOP = 0.09;
 type Corner = { at: number; p: THREE.Vector2; out: THREE.Vector2 };
 type Channel = { pts: THREE.Vector2[]; cum: number[]; corners: Corner[] };
 
-function pushArc(pts: THREE.Vector2[], r0: number, r1: number, a0: number, a1: number) {
-  const n = Math.max(2, Math.ceil(((a1 - a0) * Math.max(r0, r1)) / STEP));
+function pushArc(
+  pts: THREE.Vector2[],
+  r0: number,
+  r1: number,
+  a0: number,
+  a1: number,
+) {
+  const n = Math.max(
+    2,
+    Math.ceil((Math.abs(a1 - a0) * Math.max(r0, r1)) / STEP),
+  );
   for (let i = 1; i <= n; i++) {
     const t = i / n;
     const a = a0 + (a1 - a0) * t;
@@ -33,43 +46,58 @@ function pushArc(pts: THREE.Vector2[], r0: number, r1: number, a0: number, a1: n
   }
 }
 
-function pushLine(pts: THREE.Vector2[], to: THREE.Vector2) {
-  const from = pts[pts.length - 1];
-  const n = Math.max(1, Math.ceil(from.distanceTo(to) / STEP));
-  for (let i = 1; i <= n; i++) pts.push(from.clone().lerp(to, i / n));
+/** A half-circle U-turn around `c`, from angle a0 to a1 (radians, ±π apart). */
+function pushHairpin(
+  pts: THREE.Vector2[],
+  c: THREE.Vector2,
+  r: number,
+  a0: number,
+  a1: number,
+) {
+  const n = Math.max(2, Math.ceil((Math.abs(a1 - a0) * r) / STEP));
+  for (let i = 1; i <= n; i++) {
+    const a = a0 + ((a1 - a0) * i) / n;
+    pts.push(new THREE.Vector2(c.x + Math.cos(a) * r, c.y + Math.sin(a) * r));
+  }
 }
 
 /**
  * Generic layouts, not the real lab geometry.
- * Published: concentric half-circles joined by short radial steps, so the channel turns 90° twice per half-turn.
+ * Published: nested half-circle arches on one half of the patch, each joined to the next by a tight
+ * hairpin U-turn, so the fluid reverses direction at every turn (after the IEEE paper's figure).
  * Redesign: one continuous full-circle (Archimedean) spiral with no sharp turns.
  */
 function buildChannel(mode: Mode): Channel {
-  const pts = [new THREE.Vector2(R0, 0)];
-  const cornerIdx: number[] = [];
+  const marks: { i: number; out: THREE.Vector2 }[] = [];
+  let pts: THREE.Vector2[];
   if (mode === "published") {
-    for (let k = 0; k < HALVES; k++) {
+    pts = [new THREE.Vector2(-R0, 0)];
+    for (let k = 0; k < ARCHES; k++) {
       const r = R0 + k * PITCH;
-      pushArc(pts, r, r, k * Math.PI, (k + 1) * Math.PI);
-      if (k === HALVES - 1) break;
-      cornerIdx.push(pts.length - 1);
-      const a = (k + 1) * Math.PI;
-      pushLine(pts, new THREE.Vector2(Math.cos(a) * (r + PITCH), Math.sin(a) * (r + PITCH)));
-      cornerIdx.push(pts.length - 1);
+      // Even arches run left to right over the top, odd ones back again.
+      const [a0, a1] = k % 2 === 0 ? [Math.PI, 0] : [0, Math.PI];
+      pushArc(pts, r, r, a0, a1);
+      if (k === ARCHES - 1) break;
+      // Hairpin below the diameter, from radius r to r + PITCH on the same side.
+      const side = k % 2 === 0 ? 1 : -1;
+      const c = new THREE.Vector2(side * (r + PITCH / 2), 0);
+      const h0 = side > 0 ? Math.PI : 0;
+      pushHairpin(pts, c, PITCH / 2, h0, h0 + side * Math.PI);
+      const apex =
+        pts.length -
+        1 -
+        Math.round(Math.ceil((Math.PI * PITCH) / 2 / STEP) / 2);
+      marks.push({ i: apex, out: pts[apex].clone().sub(c).normalize() });
     }
   } else {
+    pts = [new THREE.Vector2(R0, 0)];
     pushArc(pts, R0, R0 + HALVES * PITCH, 0, HALVES * Math.PI);
   }
 
   const cum = [0];
-  for (let i = 1; i < pts.length; i++) cum.push(cum[i - 1] + pts[i].distanceTo(pts[i - 1]));
-
-  // Fluid escapes on the outside of each bend: the direction of (incoming - outgoing).
-  const corners = cornerIdx.map((i) => {
-    const a = pts[i].clone().sub(pts[i - 1]).normalize();
-    const b = pts[i + 1].clone().sub(pts[i]).normalize();
-    return { at: cum[i], p: pts[i], out: a.sub(b).normalize() };
-  });
+  for (let i = 1; i < pts.length; i++)
+    cum.push(cum[i - 1] + pts[i].distanceTo(pts[i - 1]));
+  const corners = marks.map(({ i, out }) => ({ at: cum[i], p: pts[i], out }));
   return { pts, cum, corners };
 }
 
@@ -79,8 +107,12 @@ function edges(pts: THREE.Vector2[], width: number) {
   const right: THREE.Vector2[] = [];
   const n = pts.length;
   for (let i = 0; i < n; i++) {
-    const t1 = (i > 0 ? pts[i].clone().sub(pts[i - 1]) : pts[1].clone().sub(pts[0])).normalize();
-    const t2 = (i < n - 1 ? pts[i + 1].clone().sub(pts[i]) : t1.clone()).normalize();
+    const t1 = (
+      i > 0 ? pts[i].clone().sub(pts[i - 1]) : pts[1].clone().sub(pts[0])
+    ).normalize();
+    const t2 = (
+      i < n - 1 ? pts[i + 1].clone().sub(pts[i]) : t1.clone()
+    ).normalize();
     const n1 = new THREE.Vector2(-t1.y, t1.x);
     const m = n1.clone().add(new THREE.Vector2(-t2.y, t2.x)).normalize();
     const s = width / 2 / Math.max(0.3, m.dot(n1));
@@ -134,9 +166,20 @@ function Scene({ mode, run }: { mode: Mode; run: number }) {
     const inner = edges(ch.pts, WIDTH * 0.8);
     return {
       channel: ch,
-      floor: strip(outer.left.map((v) => at(v, FLOOR_Y)), outer.right.map((v) => at(v, FLOOR_Y))),
-      walls: [outer.left, outer.right].map((e) => strip(e.map((v) => at(v, FLOOR_Y)), e.map((v) => at(v, WALL_TOP)))),
-      fill: strip(inner.left.map((v) => at(v, FILL_Y)), inner.right.map((v) => at(v, FILL_Y))),
+      floor: strip(
+        outer.left.map((v) => at(v, FLOOR_Y)),
+        outer.right.map((v) => at(v, FLOOR_Y)),
+      ),
+      walls: [outer.left, outer.right].map((e) =>
+        strip(
+          e.map((v) => at(v, FLOOR_Y)),
+          e.map((v) => at(v, WALL_TOP)),
+        ),
+      ),
+      fill: strip(
+        inner.left.map((v) => at(v, FILL_Y)),
+        inner.right.map((v) => at(v, FILL_Y)),
+      ),
     };
   }, [mode]);
   useEffect(
@@ -162,7 +205,11 @@ function Scene({ mode, run }: { mode: Mode; run: number }) {
         if (!m) continue;
         const reach = WIDTH * 0.6 + grown * (0.05 + d * 0.07);
         const size = grown * (0.075 - d * 0.018);
-        m.position.set(c.p.x + c.out.x * reach, FLOOR_Y + 0.005, c.p.y + c.out.y * reach);
+        m.position.set(
+          c.p.x + c.out.x * reach,
+          FLOOR_Y + 0.005,
+          c.p.y + c.out.y * reach,
+        );
         m.scale.set(size, size * 0.35, size);
         m.visible = grown > 0;
       }
@@ -190,7 +237,7 @@ function Scene({ mode, run }: { mode: Mode; run: number }) {
     <>
       <ambientLight intensity={1} />
       <directionalLight position={[2, 5, 3]} intensity={1.2} />
-      <group rotation={[0, Math.PI / 2, 0]}>
+      <group rotation={[0, Math.PI, 0]}>
         {/* sensor patch */}
         <mesh position={[0, -0.02, 0]}>
           <cylinderGeometry args={[2.05, 2.05, 0.08, 72]} />
@@ -217,12 +264,27 @@ function Scene({ mode, run }: { mode: Mode; run: number }) {
           <cylinderGeometry args={[0.1, 0.1, 0.06, 24]} />
           <meshStandardMaterial color={colors.wall} />
         </mesh>
-        {Array.from({ length: channel.corners.length * DROPS_PER_CORNER }, (_, i) => (
-          <mesh key={`${mode}-${i}`} ref={(m) => void (drops.current[i] = m)} visible={false}>
-            <sphereGeometry args={[1, 16, 10]} />
-            <meshStandardMaterial color={colors.warn} />
-          </mesh>
-        ))}
+        {/* sensing electrodes under the arches, as in the paper's figure */}
+        {mode === "published" &&
+          [-0.5, 0.5].map((x) => (
+            <mesh key={x} position={[x, 0.03, -1.05]}>
+              <boxGeometry args={[0.55, 0.04, 0.32]} />
+              <meshStandardMaterial color={colors.wall} />
+            </mesh>
+          ))}
+        {Array.from(
+          { length: channel.corners.length * DROPS_PER_CORNER },
+          (_, i) => (
+            <mesh
+              key={`${mode}-${i}`}
+              ref={(m) => void (drops.current[i] = m)}
+              visible={false}
+            >
+              <sphereGeometry args={[1, 16, 10]} />
+              <meshStandardMaterial color={colors.warn} />
+            </mesh>
+          ),
+        )}
       </group>
     </>
   );
@@ -230,11 +292,18 @@ function Scene({ mode, run }: { mode: Mode; run: number }) {
 
 const DESCRIPTION: Record<Mode, string> = {
   published:
-    "Published design: half-circle loops joined by sharp turns. As fluid fills from the center, it leaks out at each sharp turn between loops.",
-  redesign: "My redesign: one smooth full-circle spiral with no sharp turns. Fluid flows cleanly from the center to the outlet.",
+    "Published: half-circle arches joined by hairpin turns. Fluid leaks at every turn.",
+  redesign:
+    "My redesign: one smooth full-circle spiral. No sharp turns, no leaks.",
 };
 
-export default function SpiralSensorDemo({ active }: { active: boolean }) {
+export default function SpiralSensorDemo({
+  active,
+  preview,
+}: {
+  active: boolean;
+  preview?: boolean;
+}) {
   const [mode, setMode] = useState<Mode>("published");
   const [run, setRun] = useState(0);
 
@@ -252,38 +321,56 @@ export default function SpiralSensorDemo({ active }: { active: boolean }) {
         ) : null}
       </div>
 
-      <div className="mt-3 flex flex-wrap items-center gap-3 text-sm">
-        <div role="group" aria-label="Design" className="inline-flex overflow-hidden rounded-full border border-line">
-          {(["published", "redesign"] as const).map((m) => (
-            <button
-              key={m}
-              type="button"
-              aria-pressed={mode === m}
-              onClick={() => {
-                setMode(m);
-                setRun((r) => r + 1);
-              }}
-              className={`px-3 py-1 font-medium ${mode === m ? "bg-accent text-bg" : "text-muted"}`}
+      {!preview && (
+        <>
+          <div className="mt-3 flex flex-wrap items-center gap-3 text-sm">
+            <div
+              role="group"
+              aria-label="Design"
+              className="inline-flex overflow-hidden rounded-full border border-line"
             >
-              {m === "published" ? "Published design" : "My redesign"}
+              {(["published", "redesign"] as const).map((m) => (
+                <button
+                  key={m}
+                  type="button"
+                  aria-pressed={mode === m}
+                  onClick={() => {
+                    setMode(m);
+                    setRun((r) => r + 1);
+                  }}
+                  className={`px-3 py-1 font-medium ${mode === m ? "bg-accent text-bg" : "text-muted"}`}
+                >
+                  {m === "published" ? "Published design" : "My redesign"}
+                </button>
+              ))}
+            </div>
+            <button
+              type="button"
+              onClick={() => setRun((r) => r + 1)}
+              className="rounded-full border border-line px-3 py-1 text-muted"
+            >
+              Replay
             </button>
-          ))}
-        </div>
-        <button type="button" onClick={() => setRun((r) => r + 1)} className="rounded-full border border-line px-3 py-1 text-muted">
-          Replay
-        </button>
-      </div>
+          </div>
 
-      <p aria-live="polite" className="mt-2 text-sm text-muted">
-        {DESCRIPTION[mode]}
-      </p>
-      <p className="mt-1 text-xs text-muted">
-        Generic illustration; both spirals are stylized and not the real lab layout. Original design:{" "}
-        <a href="https://ieeexplore.ieee.org/document/11033194" target="_blank" rel="noreferrer" className="text-accent">
-          IEEE paper
-        </a>
-        .
-      </p>
+          <p aria-live="polite" className="mt-2 text-sm text-muted">
+            {DESCRIPTION[mode]}
+          </p>
+          <p className="mt-1 text-xs text-muted">
+            Generic illustration; both spirals are stylized and not the real lab
+            layout. Original design:{" "}
+            <a
+              href="https://ieeexplore.ieee.org/document/11033194"
+              target="_blank"
+              rel="noreferrer"
+              className="text-accent"
+            >
+              IEEE paper
+            </a>
+            .
+          </p>
+        </>
+      )}
     </div>
   );
 }

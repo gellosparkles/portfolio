@@ -7,7 +7,7 @@ import type { DemoId } from "@/content/site";
 // Demos load only in the browser, and only once their card scrolls into view.
 const placeholder = () => <div className="h-56 w-full animate-pulse rounded-xl bg-accent-soft/40" />;
 
-export const demos: Record<DemoId, ComponentType<{ active: boolean }>> = {
+export const demos: Record<DemoId, ComponentType<{ active: boolean; preview?: boolean }>> = {
   "hub-route": dynamic(() => import("./HubRouteDemo"), { ssr: false, loading: placeholder }),
   "spiral-sensor": dynamic(() => import("./SpiralSensorDemo"), { ssr: false, loading: placeholder }),
   "audit-pipeline": dynamic(() => import("./AuditPipelineDemo"), { ssr: false, loading: placeholder }),

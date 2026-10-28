@@ -1,9 +1,18 @@
 "use client";
 
 import { useFrame, useThree } from "@react-three/fiber";
-import { useEffect, useMemo, useRef, useState, type MutableRefObject } from "react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type MutableRefObject,
+} from "react";
 import * as THREE from "three";
-import CanvasShell, { readCssColor, useMotionAllowed } from "../three/CanvasShell";
+import CanvasShell, {
+  readCssColor,
+  useMotionAllowed,
+} from "../three/CanvasShell";
 
 type Mode = "pointer" | "sliders";
 
@@ -21,7 +30,8 @@ const GROUPS = [
   { name: "Wrist", joints: "J6–J7" },
 ];
 
-const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
+const clamp = (v: number, lo: number, hi: number) =>
+  Math.max(lo, Math.min(hi, v));
 
 /** Tip position in the arm's vertical plane (r outward, y up) for relative pitch angles pitch[1..6]. */
 function planarTip(angles: number[]) {
@@ -139,7 +149,11 @@ function Scene({
         <meshStandardMaterial color={colors.groups[GROUP_OF[i]]} />
       </mesh>
       {i >= 1 && link()}
-      {i === 0 ? chain(1) : i < JOINTS - 1 ? chain(i + 1) : (
+      {i === 0 ? (
+        chain(1)
+      ) : i < JOINTS - 1 ? (
+        chain(i + 1)
+      ) : (
         <mesh position={[0, LINK, 0]}>
           <sphereGeometry args={[0.1, 16, 12]} />
           <meshStandardMaterial color={colors.groups[2]} />
@@ -168,7 +182,13 @@ function Scene({
 const SLIDER_LABELS = ["J1 base yaw", "J2", "J3", "J4", "J5", "J6", "J7"];
 const SWATCH = ["bg-accent", "bg-warn", "bg-fg"];
 
-export default function TetherArmDemo({ active }: { active: boolean }) {
+export default function TetherArmDemo({
+  active,
+  preview,
+}: {
+  active: boolean;
+  preview?: boolean;
+}) {
   const [mode, setMode] = useState<Mode>("pointer");
   const [sliders, setSliders] = useState<number[]>(REST);
   const [moved, setMoved] = useState(0);
@@ -202,68 +222,98 @@ export default function TetherArmDemo({ active }: { active: boolean }) {
             className="h-full w-full"
             camera={{ position: [0, 2.2, 6.2], fov: 40 }}
           >
-            <Scene mode={mode} sliders={sliders} target={target} moved={moved} />
+            <Scene
+              mode={mode}
+              sliders={sliders}
+              target={target}
+              moved={moved}
+            />
           </CanvasShell>
         ) : null}
       </div>
 
-      <div className="mt-3 flex flex-wrap items-center gap-3 text-sm">
-        <div role="group" aria-label="Control" className="inline-flex overflow-hidden rounded-full border border-line">
-          {(["pointer", "sliders"] as const).map((m) => (
-            <button
-              key={m}
-              type="button"
-              aria-pressed={mode === m}
-              onClick={() => setMode(m)}
-              className={`px-3 py-1 font-medium ${mode === m ? "bg-accent text-bg" : "text-muted"}`}
+      {!preview && (
+        <>
+          <div className="mt-3 flex flex-wrap items-center gap-3 text-sm">
+            <div
+              role="group"
+              aria-label="Control"
+              className="inline-flex overflow-hidden rounded-full border border-line"
             >
-              {m === "pointer" ? "Follow pointer" : "Joint sliders"}
-            </button>
-          ))}
-        </div>
-        <ul className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted">
-          {GROUPS.map((g, i) => (
-            <li key={g.name} className="inline-flex items-center gap-1.5">
-              <span className={`h-2.5 w-2.5 rounded-full ${SWATCH[i]}`} aria-hidden />
-              {g.name} ({g.joints})
-            </li>
-          ))}
-        </ul>
-      </div>
+              {(["pointer", "sliders"] as const).map((m) => (
+                <button
+                  key={m}
+                  type="button"
+                  aria-pressed={mode === m}
+                  onClick={() => setMode(m)}
+                  className={`px-3 py-1 font-medium ${mode === m ? "bg-accent text-bg" : "text-muted"}`}
+                >
+                  {m === "pointer" ? "Follow pointer" : "Joint sliders"}
+                </button>
+              ))}
+            </div>
+            <ul className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted">
+              {GROUPS.map((g, i) => (
+                <li key={g.name} className="inline-flex items-center gap-1.5">
+                  <span
+                    className={`h-2.5 w-2.5 rounded-full ${SWATCH[i]}`}
+                    aria-hidden
+                  />
+                  {g.name} ({g.joints})
+                </li>
+              ))}
+            </ul>
+          </div>
 
-      {mode === "sliders" && (
-        <div className="mt-3 grid max-w-xl grid-cols-1 gap-x-6 gap-y-1 sm:grid-cols-2">
-          {SLIDER_LABELS.map((label, i) => {
-            const lim = i === 0 ? Math.PI / 2 : PITCH_LIMIT;
-            return (
-              <label key={label} className="flex items-center gap-2 text-xs text-muted">
-                <span className="w-20 shrink-0">{label}</span>
-                <input
-                  type="range"
-                  min={-lim}
-                  max={lim}
-                  step={0.02}
-                  value={sliders[i]}
-                  onChange={(e) => setSliders((s) => s.map((v, k) => (k === i ? Number(e.target.value) : v)))}
-                  aria-label={`${label} angle`}
-                  className="min-w-0 flex-1 accent-accent"
-                />
-              </label>
-            );
-          })}
-        </div>
+          {mode === "sliders" && (
+            <div className="mt-3 grid max-w-xl grid-cols-1 gap-x-6 gap-y-1 sm:grid-cols-2">
+              {SLIDER_LABELS.map((label, i) => {
+                const lim = i === 0 ? Math.PI / 2 : PITCH_LIMIT;
+                return (
+                  <label
+                    key={label}
+                    className="flex items-center gap-2 text-xs text-muted"
+                  >
+                    <span className="w-20 shrink-0">{label}</span>
+                    <input
+                      type="range"
+                      min={-lim}
+                      max={lim}
+                      step={0.02}
+                      value={sliders[i]}
+                      onChange={(e) =>
+                        setSliders((s) =>
+                          s.map((v, k) =>
+                            k === i ? Number(e.target.value) : v,
+                          ),
+                        )
+                      }
+                      aria-label={`${label} angle`}
+                      className="min-w-0 flex-1 accent-accent"
+                    />
+                  </label>
+                );
+              })}
+            </div>
+          )}
+
+          <p aria-live="polite" className="mt-2 text-sm text-muted">
+            {summary}
+          </p>
+          <p className="mt-1 text-xs text-muted">
+            Made-up arm standing in for the real model. Project:{" "}
+            <a
+              href="https://uscterralabs.com"
+              target="_blank"
+              rel="noreferrer"
+              className="text-accent"
+            >
+              uscterralabs.com
+            </a>
+            .
+          </p>
+        </>
       )}
-
-      <p aria-live="polite" className="mt-2 text-sm text-muted">
-        {summary}
-      </p>
-      <p className="mt-1 text-xs text-muted">
-        Made-up arm standing in for the real model. Project:{" "}
-        <a href="https://uscterralabs.com" target="_blank" rel="noreferrer" className="text-accent">
-          uscterralabs.com
-        </a>
-        .
-      </p>
     </div>
   );
 }

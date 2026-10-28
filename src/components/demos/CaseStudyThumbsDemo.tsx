@@ -61,22 +61,24 @@ function MiniBoard() {
 
 const tile = "block rounded-xl border border-line bg-bg p-4 transition-colors hover:border-accent";
 
-/** Static thumbnails, each linking to its case study. No animation, so `active` is unused. */
-export default function CaseStudyThumbsDemo() {
+/**
+ * Static thumbnails, each linking to its case study. No animation, so `active` is unused.
+ * `preview` drops the links so the thumbnails can sit inside another link.
+ */
+export default function CaseStudyThumbsDemo({ preview }: { active: boolean; preview?: boolean }) {
+  const Tile = preview ? "div" : Link;
   return (
     <div className="grid gap-4 sm:grid-cols-2">
-      <Link href="/projects/gesture-recognition" className={tile}>
+      <Tile href="/projects/gesture-recognition" className={tile}>
         <MiniMatrix />
         <p className="mt-3 text-sm font-medium">Gesture recognition →</p>
-        <p className="text-xs text-muted">
-          Confusion matrix, {gestureClasses.length} classes. Open it to explore in 3D.
-        </p>
-      </Link>
-      <Link href="/projects/sudoku-solver" className={tile}>
+        <p className="text-xs text-muted">{gestureClasses.length}-class confusion matrix, in 3D.</p>
+      </Tile>
+      <Tile href="/projects/sudoku-solver" className={tile}>
         <MiniBoard />
         <p className="mt-3 text-sm font-medium">ML Sudoku solver →</p>
-        <p className="text-xs text-muted">ESP32-CAM digit reader. Open it to watch the solver run.</p>
-      </Link>
+        <p className="text-xs text-muted">ESP32-CAM digit reader and solver.</p>
+      </Tile>
     </div>
   );
 }

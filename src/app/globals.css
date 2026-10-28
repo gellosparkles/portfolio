@@ -1,26 +1,31 @@
 @import "tailwindcss";
 
+/* Warm paper, hairline rules, sage and coral accents. */
 :root {
-  --bg: #fbfbfa;
-  --surface: #ffffff;
-  --fg: #16181d;
-  --muted: #5c6370;
-  --line: #e4e4e0;
-  --accent: #3b5bdb;
-  --accent-soft: #e7ecff;
-  --warn: #e8590c;
+  --bg: #ecebe5;
+  --surface: #f6f5f1;
+  --fg: #151513;
+  --muted: #6a6961;
+  --line: #d3d1c8;
+  --accent: #2f6b4f;
+  --accent-soft: #dce6dc;
+  --warn: #d9583a;
+  --sage: #a9c7ad;
+  --coral: #f0a58c;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #0d0f13;
-    --surface: #14171d;
-    --fg: #e8e9ec;
-    --muted: #9aa1ad;
-    --line: #262a33;
-    --accent: #7c9bff;
-    --accent-soft: #1b2340;
-    --warn: #ff8a4c;
+    --bg: #121311;
+    --surface: #1a1b18;
+    --fg: #ecebe5;
+    --muted: #9b9a90;
+    --line: #2c2d29;
+    --accent: #8fc7a6;
+    --accent-soft: #1e2a23;
+    --warn: #ff8a6b;
+    --sage: #2f4a38;
+    --coral: #5a3125;
   }
 }
 
@@ -46,12 +51,152 @@ body {
   color: var(--fg);
 }
 
+/* Faint vertical hairlines down the page, aligned to the content column. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: linear-gradient(to right, var(--line) 1px, transparent 1px);
+  background-size: 25% 100%;
+  background-position: center;
+  opacity: 0.45;
+  margin: 0 max(16px, calc((100vw - 64rem) / 2));
+}
+
 ::selection {
   background: var(--accent-soft);
+}
+
+/* Small uppercase mono labels. */
+.label {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* Soft blurred colour fields behind the hero. */
+.blob {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(64px);
+  opacity: 0.8;
+  pointer-events: none;
+  animation: drift 18s ease-in-out infinite alternate;
+}
+@keyframes drift {
+  to {
+    transform: translate3d(24px, -18px, 0) scale(1.08);
+  }
+}
+
+/* Home rail: one panel in focus, neighbours eased back. */
+.rail {
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+.rail::-webkit-scrollbar {
+  display: none;
+}
+.rail > * {
+  scroll-snap-align: center;
+  transition:
+    transform 500ms cubic-bezier(0.2, 0.7, 0.2, 1),
+    opacity 500ms ease;
+}
+.rail > [data-focus="false"] {
+  transform: scale(0.94);
+  opacity: 0.55;
+}
+
+/* View transitions: slide between pages, morph the demo window, keep the header still. */
+::view-transition {
+  pointer-events: none;
+}
+::view-transition-group(.morph) {
+  animation-duration: 450ms;
+  animation-timing-function: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+::view-transition-image-pair(.morph) {
+  animation-name: via-blur;
+}
+@keyframes via-blur {
+  30% {
+    filter: blur(4px);
+  }
+}
+
+::view-transition-old(.nav-forward) {
+  --slide-offset: -80px;
+  animation:
+    150ms ease-in both fade reverse,
+    450ms cubic-bezier(0.2, 0.7, 0.2, 1) both slide reverse;
+}
+::view-transition-new(.nav-forward) {
+  --slide-offset: 80px;
+  animation:
+    250ms ease-out 120ms both fade,
+    450ms cubic-bezier(0.2, 0.7, 0.2, 1) both slide;
+}
+::view-transition-old(.nav-back) {
+  --slide-offset: 80px;
+  animation:
+    150ms ease-in both fade reverse,
+    450ms cubic-bezier(0.2, 0.7, 0.2, 1) both slide reverse;
+}
+::view-transition-new(.nav-back) {
+  --slide-offset: -80px;
+  animation:
+    250ms ease-out 120ms both fade,
+    450ms cubic-bezier(0.2, 0.7, 0.2, 1) both slide;
+}
+@keyframes fade {
+  from {
+    filter: blur(3px);
+    opacity: 0;
+  }
+  to {
+    filter: blur(0);
+    opacity: 1;
+  }
+}
+@keyframes slide {
+  from {
+    translate: var(--slide-offset);
+  }
+  to {
+    translate: 0;
+  }
+}
+
+::view-transition-group(site-header) {
+  animation: none;
+  z-index: 100;
+}
+::view-transition-old(site-header) {
+  display: none;
+}
+::view-transition-new(site-header) {
+  animation: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+  .blob {
+    animation: none;
+  }
+  .rail > * {
+    transition: none;
+  }
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
   }
 }

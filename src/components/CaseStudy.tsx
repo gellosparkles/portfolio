@@ -14,8 +14,8 @@ export function CaseStudyHeader({
 }) {
   return (
     <header className="mx-auto max-w-5xl px-4 pt-10 sm:px-6">
-      <Link href="/#projects" className="text-sm text-muted hover:text-fg">
-        ← All projects
+      <Link href="/#research" className="label hover:text-fg">
+        ← Back
       </Link>
       <p className="mt-6 font-mono text-xs uppercase tracking-widest text-accent">{kicker}</p>
       <h1 className="mt-2 max-w-3xl text-3xl font-semibold tracking-tight sm:text-4xl">{title}</h1>
