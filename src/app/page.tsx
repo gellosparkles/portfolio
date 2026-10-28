@@ -4,6 +4,7 @@ import { DemoCard } from "@/components/demos/DemoCard";
 import { Section } from "@/components/Section";
 import { certifications, education, experience, honors, interests, publications, site, skills, stats } from "@/content/site";
 import { projects } from "@/content/projects";
+import { ProjectBody, ProjectDemoCard } from "@/components/ProjectCard";
 
 export default function Home() {
   const { email, linkedin, github, resume } = site.links;
@@ -73,29 +74,20 @@ export default function Home() {
 
       <Section id="projects" title="Featured projects">
         <div className="grid gap-5 md:grid-cols-2">
-          {projects.map((p) => (
-            <Link
-              key={p.slug}
-              href={`/projects/${p.slug}`}
-              className="group flex flex-col rounded-2xl border border-line bg-surface p-6 transition-colors hover:border-accent"
-            >
-              <p className="font-mono text-xs text-muted">{p.kicker}</p>
-              <h3 className="mt-2 text-xl font-semibold tracking-tight group-hover:text-accent">{p.title}</h3>
-              <p className="mt-3 flex-1 text-sm leading-relaxed text-muted">{p.summary}</p>
-              <p className="mt-5">
-                <span className="text-3xl font-semibold tracking-tight text-accent">{p.metric.value}</span>{" "}
-                <span className="text-sm text-muted">{p.metric.label}</span>
-              </p>
-              <ul className="mt-4 flex flex-wrap gap-1.5">
-                {p.tags.map((t) => (
-                  <li key={t} className="rounded-full bg-accent-soft px-2.5 py-0.5 text-xs">
-                    {t}
-                  </li>
-                ))}
-              </ul>
-              <span className="mt-5 text-sm font-medium text-accent">Read the case study →</span>
-            </Link>
-          ))}
+          {projects.map((p) =>
+            p.demo ? (
+              <ProjectDemoCard key={p.slug} p={p} />
+            ) : (
+              <Link
+                key={p.slug}
+                href={`/projects/${p.slug}`}
+                className="group flex flex-col rounded-2xl border border-line bg-surface p-6 transition-colors hover:border-accent"
+              >
+                <ProjectBody p={p} />
+                <span className="mt-5 text-sm font-medium text-accent">Read the case study →</span>
+              </Link>
+            ),
+          )}
         </div>
       </Section>
 

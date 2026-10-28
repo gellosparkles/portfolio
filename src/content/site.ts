@@ -37,7 +37,7 @@ export const education = {
   gpa: "3.85",
 };
 
-export type DemoId = "hub-route" | "connection-path" | "audit-pipeline" | "spiral-sensor" | "tether-arm" | "case-studies";
+export type DemoId = "hub-route" | "connection-path" | "audit-pipeline" | "spiral-sensor" | "tether-arm" | "case-studies" | "cell-filament";
 
 export type Experience = {
   org: string;

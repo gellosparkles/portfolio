@@ -14,4 +14,5 @@ export const demos: Record<DemoId, ComponentType<{ active: boolean }>> = {
   "connection-path": dynamic(() => import("./ConnectionPathDemo"), { ssr: false, loading: placeholder }),
   "tether-arm": dynamic(() => import("./TetherArmDemo"), { ssr: false, loading: placeholder }),
   "case-studies": dynamic(() => import("./CaseStudyThumbsDemo"), { ssr: false, loading: placeholder }),
+  "cell-filament": dynamic(() => import("./CellFilamentDemo"), { ssr: false, loading: placeholder }),
 };
