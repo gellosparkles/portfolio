@@ -37,7 +37,7 @@ export const education = {
   gpa: "3.85",
 };
 
-export type DemoId = "hub-route" | "connection-path";
+export type DemoId = "hub-route" | "connection-path" | "audit-pipeline";
 
 export type Experience = {
   org: string;
@@ -78,6 +78,7 @@ export const experience: Experience[] = [
     when: "Jun 2026 – Aug 2026",
     summary: "LLM tool that audits company documents against ISO 27001.",
     chips: ["98% match (51/52)", "~60 s per audit", "Gemini + Grok", "Vertex AI"],
+    demo: "audit-pipeline",
   },
   {
     org: "YesTurnkey Technology",
