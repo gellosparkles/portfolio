@@ -73,9 +73,9 @@ export default function SudokuPage() {
           sharper digit contrast, and side openings keep the ESP32-CAM&apos;s reset button reachable when switching
           firmware. The camera streams over Wi-Fi from Arduino IDE, and I tuned its angle, zoom and lighting.
         </p>
-        {/* Capped at each source image's native width (252 px and 189 px) so they never upscale. */}
+        {/* Both shown at 189 px, the lab bench photo's native width, so neither upscales. */}
         <div className="flex flex-wrap items-start justify-center gap-6">
-          <Figure src="/projects/sudoku/sketch.png" alt="Hand sketch of the rig with dimensions 13×13×12 studs" caption="Design sketch: 13 × 13 × 12 studs." className="w-full max-w-[252px]" />
+          <Figure src="/projects/sudoku/sketch.png" alt="Hand sketch of the rig with dimensions 13×13×12 studs" caption="Design sketch: 13 × 13 × 12 studs." className="w-full max-w-[189px]" />
           <Figure src="/projects/sudoku/lab-bench.jpg" alt="Laptop, oscilloscope and LEGO rig on a lab bench" caption="Testing on the lab bench." className="w-full max-w-[189px]" />
         </div>
       </Block>
