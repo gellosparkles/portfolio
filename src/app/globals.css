@@ -115,6 +115,22 @@ body::before {
   }
 }
 
+/* Photo strip under the stats: two copies of the track loop seamlessly; hover pauses it. */
+.marquee {
+  mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+}
+.marquee-track {
+  animation: marquee 90s linear infinite;
+}
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+@keyframes marquee {
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
 /* Home rail: one panel in focus, neighbours eased back. */
 .rail {
   scroll-snap-type: x mandatory;
@@ -210,6 +226,12 @@ body::before {
     scroll-behavior: auto;
   }
   .blob {
+    animation: none;
+  }
+  .marquee {
+    overflow-x: auto;
+  }
+  .marquee-track {
     animation: none;
   }
   .rail > * {

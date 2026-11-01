@@ -59,7 +59,12 @@ export type Experience = {
   details: string[];
   demo: DemoId;
   link?: { label: string; href: string };
+  /** Process photos for the detail page's build log, served from /public/media/<slug>/. */
+  media?: Media[];
 };
+
+// Slides render as an overlapping deck on the work page instead of the photo row.
+export type Media = { src: string; alt: string; caption: string; slide?: true };
 
 // Resume order. One sentence and 2–4 chips per role; the resume bullets are not reproduced.
 export const experience: Experience[] = [
@@ -80,6 +85,14 @@ export const experience: Experience[] = [
       "The lab confirmed the redesign was more reliable and performed better in experiments. Two co-authored manuscripts on the work are to appear in 2026.",
     ],
     demo: "spiral-sensor",
+    media: [
+      { src: "/media/khan-lab/channel-sketch.webp", alt: "Whiteboard sketch of a spiral microfluidic channel with 86 µm and 170 µm widths and 40–50 µL volumes", caption: "Channel widths and volumes, worked out on the whiteboard." },
+      { src: "/media/khan-lab/materials-sketch.webp", alt: "Sketch of PVB, PDMS and Parylene C layers over the channel outline", caption: "Choosing the layer stack: PVB, PDMS, Parylene C." },
+      { src: "/media/khan-lab/layout-sketch.webp", alt: "Hand sketch of the electrode ring and channel inlets", caption: "Electrode ring and inlets, first pass." },
+      { src: "/media/khan-lab/tubing-sketch.webp", alt: "Notebook sketch with tubing laid over the channel plan for a flow test", caption: "Tubing routed for the first flow test." },
+      { src: "/media/khan-lab/mask-print.webp", alt: "Printed microfluidic mask designs on transparency film", caption: "Masks printed for laser cutting." },
+      { src: "/media/khan-lab/stencil-cutouts.webp", alt: "Small cut-out stencils of the channel design", caption: "Cut stencils, ready to bond." },
+    ],
   },
   {
     slug: "hubl",
@@ -97,6 +110,12 @@ export const experience: Experience[] = [
       "Hubl won 1st place at the USC Buildathon and 2nd at Games Week, and joined the Greif Incubator.",
     ],
     demo: "hub-route",
+    media: [
+      { src: "/media/hubl/team.webp", alt: "The five-person BusIn' team on stage with the $1,000 check and finalist certificates", caption: "The team, right after the win." },
+      { src: "/media/hubl/first-place.webp", alt: "Innovate x LA 2025 Design Day and Buildathon first-place certificate", caption: "1st place, Innovate x LA Buildathon." },
+      { src: "/media/hubl/prize-check.webp", alt: "Oversized $1,000 prize check made out to BusIn'", caption: "$1,000 prize for the BusIn' pitch." },
+      { src: "/media/hubl/user-flow.webp", alt: "Handwritten four-step booking flow: view trips, pick time, reserve, invite friends", caption: "The four-step booking flow, on paper first." },
+    ],
   },
   {
     slug: "iii",
@@ -114,6 +133,13 @@ export const experience: Experience[] = [
       "Every company, document and verdict in the demo is synthetic.",
     ],
     demo: "audit-pipeline",
+    media: [
+      { src: "/media/iii/phase-plan.webp", alt: "Notebook page planning the auditor in three phases with a list of key risks", caption: "Phase plan and risk list, written before any code." },
+      { src: "/media/iii/slide-tool-overview.webp", alt: "Slide: the tool in four stages, LLM-generated company data, evidence extraction, four-step ISMS review and LLM cross-check", caption: "The tool in four stages.", slide: true },
+      { src: "/media/iii/slide-pipeline.webp", alt: "Slide: analysis pipeline from reading evidence to JSON and Markdown output, run on Gemini 3.5 Flash and Grok 4.2", caption: "Evidence in, verdict out as JSON and Markdown.", slide: true },
+      { src: "/media/iii/slide-isms-review.webp", alt: "Slide: four ISMS checkpoints, mechanism, execution, continuity and review, mapped to non-, partial and full compliance", caption: "Four checkpoints decide the compliance level.", slide: true },
+      { src: "/media/iii/slide-llm-crosscheck.webp", alt: "Slide: Gemini and Grok each judge three times and the median verdict is kept", caption: "Two models, three runs each, median verdict.", slide: true },
+    ],
   },
   {
     slug: "yesturnkey",
@@ -130,6 +156,9 @@ export const experience: Experience[] = [
       "STUN finds a direct path through the NAT. When there isn't one, the stream falls back to a TURN relay.",
     ],
     demo: "connection-path",
+    media: [
+      { src: "/media/yesturnkey/desk.webp", alt: "Internship workstation with a monitor, laptop, Raspberry Pi and network cabling", caption: "The bench: Pi, laptop and the network it had to get through." },
+    ],
   },
   {
     slug: "terra-labs",
@@ -147,6 +176,11 @@ export const experience: Experience[] = [
       "The arm in the demo is a stand-in, not the real model.",
     ],
     demo: "tether-arm",
+    media: [
+      { src: "/media/terra-labs/arm-sketch.webp", alt: "Whiteboard sketch of the robot arm's joints, motors and battery placement", caption: "Whiteboard layout of joints, motors and battery." },
+      { src: "/media/terra-labs/actuator-bench.webp", alt: "Joint actuators wired to a CAN bus on a bench supply at 24 V", caption: "Actuators on the CAN bus at 24 V." },
+      { src: "/media/terra-labs/battery-charge.webp", alt: "6S LiPo pack on a balance charger", caption: "Balance-charging the 6S pack." },
+    ],
     link: { label: "uscterralabs.com", href: "https://uscterralabs.com" },
   },
   {

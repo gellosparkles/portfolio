@@ -1,4 +1,4 @@
-import { experience, type DemoId } from "./site";
+import { experience, type DemoId, type Media } from "./site";
 import { projects } from "./projects";
 
 /** One entry on the home-page rail, with a detail page at /work/<slug>. */
@@ -13,6 +13,7 @@ export type Work = {
   chips: string[];
   demo: DemoId;
   link?: { label: string; href: string };
+  media?: Media[];
 };
 
 const cell = projects.find((p) => p.slug === "cell-filament-tool")!;
@@ -29,6 +30,7 @@ export const work: Work[] = [
     chips: e.chips,
     demo: e.demo,
     link: e.link,
+    media: e.media,
   })),
   {
     slug: "cell-filament",

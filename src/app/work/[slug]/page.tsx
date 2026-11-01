@@ -26,6 +26,8 @@ export default async function WorkPage({ params }: PageProps<"/work/[slug]">) {
   const w = work[i];
   const prev = work[i - 1];
   const next = work[i + 1];
+  const photos = w.media?.filter((m) => !m.slide) ?? [];
+  const slides = w.media?.filter((m) => m.slide) ?? [];
 
   return (
     <ViewTransition enter={slide} exit={slide} default="none">
@@ -55,6 +57,53 @@ export default async function WorkPage({ params }: PageProps<"/work/[slug]">) {
             <WorkDemo id={w.demo} />
           </section>
         </ViewTransition>
+
+        {w.media && (
+          <section aria-labelledby="build-log" className="mt-10">
+            <p id="build-log" className="label flex items-center justify-center gap-2">
+              <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-accent" />
+              Build log · {w.media.length} {w.media.length === 1 ? "photo" : "photos"} from the process
+            </p>
+            {/* One shared height keeps portrait notebook pages and landscape bench shots at their own ratios, centred per row. */}
+            <div className="mt-4 flex flex-wrap justify-center gap-4">
+              {photos.map((m) => (
+                <figure key={m.src} className="w-full sm:w-auto">
+                  <a href={m.src} target="_blank" rel="noreferrer" className="group block overflow-hidden rounded-xl border border-line bg-surface">
+                    {/* eslint-disable-next-line @next/next/no-img-element -- pre-sized WebP; next/image adds nothing here */}
+                    <img src={m.src} alt={m.alt} loading="lazy" className="w-full transition-transform duration-500 group-hover:scale-[1.03] sm:h-72 sm:w-auto" />
+                  </a>
+                  <figcaption className="mt-1.5 max-w-0 min-w-full text-xs text-muted">{m.caption}</figcaption>
+                </figure>
+              ))}
+            </div>
+            {slides.length > 0 && (
+              <>
+                {/* Deck: every slide shares one grid cell, shifted right and down by its index, so each is mostly hidden under the next until hovered.
+                    The lift sits on the inner figure so the hover target never moves out from under the cursor. Plain column on phones. */}
+                <ol className="mx-auto mt-8 flex max-w-3xl flex-col gap-4 sm:grid sm:gap-0" style={{ "--n": slides.length - 1 } as React.CSSProperties}>
+                  {slides.map((m, i) => (
+                    <li
+                      key={m.src}
+                      className="group hover:z-50! focus-within:z-50! sm:col-start-1 sm:row-start-1 sm:mt-[calc(var(--i)*1.75rem)] sm:ml-[calc(var(--i)*3.5rem)] sm:w-[calc(100%-var(--n)*3.5rem)]"
+                      style={{ "--i": i, zIndex: i } as React.CSSProperties}
+                    >
+                      <figure className="relative transition-transform duration-300 sm:group-hover:-translate-y-3 sm:group-focus-within:-translate-y-3">
+                        <a href={m.src} target="_blank" rel="noreferrer" className="block overflow-hidden rounded-xl border border-line bg-surface shadow-[-8px_0_24px_-12px_rgb(0_0_0/0.35)]">
+                          {/* eslint-disable-next-line @next/next/no-img-element -- pre-sized WebP; next/image adds nothing here */}
+                          <img src={m.src} alt={m.alt} loading="lazy" className="w-full" />
+                        </a>
+                        <figcaption className="mt-1.5 text-xs text-muted sm:pointer-events-none sm:absolute sm:inset-x-0 sm:bottom-0 sm:mt-0 sm:rounded-b-xl sm:bg-black/75 sm:px-3 sm:py-2 sm:text-white sm:opacity-0 sm:transition-opacity group-hover:opacity-100 group-focus-within:opacity-100">
+                          {i + 1}/{slides.length} · {m.caption}
+                        </figcaption>
+                      </figure>
+                    </li>
+                  ))}
+                </ol>
+                <p className="label mt-3 hidden text-center sm:block">Hover a slide to pull it forward</p>
+              </>
+            )}
+          </section>
+        )}
 
         <div className="mt-10 grid gap-8 md:grid-cols-[1.4fr_1fr]">
           <div className="space-y-4 leading-relaxed">
