@@ -8,9 +8,12 @@ import { useInView } from "./demos/hooks";
 
 const pad = (n: number) => String(n).padStart(2, "0");
 
+// Each card takes the next colour in the site palette for its stat, rule and hover.
+const HUES = ["var(--accent)", "var(--warn)", "var(--cyber)", "var(--software)"];
+
 /**
- * Horizontal rail of work previews. The panel nearest the centre is in focus: it plays its demo,
- * its neighbours keep a still mount, and the rest render nothing. Each panel opens /work/<slug>.
+ * Horizontal rail of work previews. The panel nearest the centre is in focus; it and its neighbours
+ * play their demos, and the rest render nothing. Each panel opens /work/<slug>.
  */
 export default function WorkRail({ items }: { items: Work[] }) {
   const rail = useRef<HTMLOListElement>(null);
@@ -91,40 +94,38 @@ export default function WorkRail({ items }: { items: Work[] }) {
         {items.map((w, i) => {
           const Demo = demos[w.demo];
           const show = mounted.has(i);
+          const hue = HUES[i % HUES.length];
           return (
-            <li key={w.slug} data-focus={i === focus} className="w-[min(34rem,86vw)] shrink-0">
+            <li key={w.slug} data-focus={i === focus} className="w-[min(34rem,86vw)] shrink-0" style={{ "--hue": hue } as React.CSSProperties}>
               <Link
                 href={`/work/${w.slug}`}
                 transitionTypes={["nav-forward"]}
-                className="group block rounded-2xl border border-line bg-surface p-4 transition-colors hover:border-fg sm:p-5"
+                aria-label={`${w.title}: ${w.big.value} ${w.big.unit}`}
+                className="group relative block overflow-hidden rounded-2xl border border-line bg-surface p-3 transition-colors hover:border-[var(--hue)] sm:p-4"
                 onFocus={() => i !== focus && go(i)}
               >
-                <div className="flex items-baseline justify-between gap-3">
-                  <span className="label">
-                    {pad(i + 1)} · {w.kicker}
-                  </span>
-                  <span className="label shrink-0 transition-transform group-hover:translate-x-1">Open →</span>
-                </div>
-
+                <span aria-hidden className="absolute inset-x-0 top-0 h-1 bg-[var(--hue)]" />
                 <ViewTransition name={`demo-${w.slug}`} share="morph" default="none">
                   <div
                     inert
                     aria-hidden
-                    className="pointer-events-none relative mt-3 h-52 overflow-hidden rounded-xl border border-line bg-bg sm:h-64 [mask-image:linear-gradient(to_bottom,black_75%,transparent)]"
+                    className="pointer-events-none relative mt-1 h-56 overflow-hidden rounded-xl border border-line bg-bg sm:h-72 [mask-image:linear-gradient(to_bottom,black_80%,transparent)]"
                   >
-                    {show && <Demo active={inView && i === focus} preview />}
+                    {show && <Demo active={inView && Math.abs(i - focus) <= 1} preview />}
                   </div>
                 </ViewTransition>
 
-                <div className="mt-4 flex items-end justify-between gap-4">
-                  <div className="min-w-0">
-                    <ViewTransition name={`title-${w.slug}`} share="morph" default="none">
-                      <h3 className="text-lg font-semibold tracking-tight">{w.title}</h3>
-                    </ViewTransition>
-                    <p className="mt-1 text-sm text-muted">{w.hook}</p>
-                  </div>
+                <div className="mt-4 flex items-end justify-between gap-4 px-1 pb-1">
+                  <ViewTransition name={`title-${w.slug}`} share="morph" default="none">
+                    <h3 className="min-w-0 text-2xl font-semibold leading-[1.05] tracking-tight text-balance sm:text-[2rem]">
+                      {w.title}
+                      <span aria-hidden className="ml-2 inline-block text-[var(--hue)] transition-transform group-hover:translate-x-1">
+                        →
+                      </span>
+                    </h3>
+                  </ViewTransition>
                   <p className="shrink-0 text-right">
-                    <span className="block font-mono text-3xl font-medium tracking-tight sm:text-4xl">{w.big.value}</span>
+                    <span className="block font-mono text-3xl font-medium tracking-tight text-[var(--hue)] sm:text-4xl">{w.big.value}</span>
                     <span className="label">{w.big.unit}</span>
                   </p>
                 </div>

@@ -24,12 +24,19 @@ const MODES: Record<Mode, { label: string; path: string; caption: string }> = {
 const PACKETS = [0, 1, 2];
 const DURATION = 3;
 
-export default function ConnectionPathDemo({ active }: { active: boolean }) {
+export default function ConnectionPathDemo({ active, preview }: { active: boolean; preview?: boolean }) {
   const [mode, setMode] = useState<Mode>("direct");
   const reduced = useReducedMotion();
   const svg = useRef<SVGSVGElement>(null);
   const { path, caption } = MODES[mode];
   const relayed = mode === "turn";
+
+  // The rail preview flips between the direct and relayed paths on its own.
+  useEffect(() => {
+    if (!preview || !active || reduced) return;
+    const t = setInterval(() => setMode((m) => (m === "direct" ? "turn" : "direct")), 4500);
+    return () => clearInterval(t);
+  }, [preview, active, reduced]);
 
   // Freeze SMIL animation while the card is off screen.
   useEffect(() => {

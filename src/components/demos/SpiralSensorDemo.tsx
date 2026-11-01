@@ -7,6 +7,7 @@ import CanvasShell, {
   readCssColor,
   useMotionAllowed,
 } from "../three/CanvasShell";
+import { useReducedMotion } from "./hooks";
 
 type Mode = "published" | "redesign";
 
@@ -298,6 +299,14 @@ export default function SpiralSensorDemo({
 }) {
   const [mode, setMode] = useState<Mode>("published");
   const [run, setRun] = useState(0);
+  const motion = !useReducedMotion();
+
+  // The rail preview alternates the two designs, each after its fill has finished and been seen.
+  useEffect(() => {
+    if (!preview || !active || !motion) return;
+    const t = setInterval(() => setMode((m) => (m === "published" ? "redesign" : "published")), (FILL_SECONDS + 1.5) * 1000);
+    return () => clearInterval(t);
+  }, [preview, active, motion]);
 
   return (
     <div className="mx-auto max-w-xl">
@@ -311,6 +320,11 @@ export default function SpiralSensorDemo({
             <Scene mode={mode} run={run} />
           </CanvasShell>
         ) : null}
+        {preview && (
+          <span className={`absolute left-3 top-3 rounded-full px-2.5 py-0.5 font-mono text-[11px] font-medium uppercase tracking-wider ${mode === "published" ? "bg-coral text-fg" : "bg-sage text-fg"}`}>
+            {mode === "published" ? "Published · leaks" : "Redesign · sealed"}
+          </span>
+        )}
       </div>
 
       {!preview && (

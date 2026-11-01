@@ -1,38 +1,42 @@
 @import "tailwindcss";
 
-/* Warm paper, hairline rules, sage and coral accents. */
+/* Light by default: warm paper, hairline rules, sage, coral and ink accents. Dark is opt-in via the header toggle. */
 :root {
-  --bg: #ecebe5;
-  --surface: #f6f5f1;
+  color-scheme: light;
+  --bg: #f4f2ec;
+  --surface: #fbfaf7;
   --fg: #151513;
-  --muted: #6a6961;
-  --line: #d3d1c8;
+  --muted: #66655d;
+  --line: #dddad0;
   --accent: #2f6b4f;
-  --accent-soft: #dce6dc;
+  --accent-soft: #dfeadf;
   --warn: #d9583a;
-  --sage: #a9c7ad;
-  --coral: #f0a58c;
+  --sage: #b9d3bc;
+  --coral: #f3b39d;
+  --sky: #b9d2e8;
+  --lilac: #d4c6ef;
   --robotics: #d9583a;
   --cyber: #1f8a86;
   --software: #7a55c4;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #121311;
-    --surface: #1a1b18;
-    --fg: #ecebe5;
-    --muted: #9b9a90;
-    --line: #2c2d29;
-    --accent: #8fc7a6;
-    --accent-soft: #1e2a23;
-    --warn: #ff8a6b;
-    --sage: #2f4a38;
-    --coral: #5a3125;
-    --robotics: #ff8a6b;
-    --cyber: #5fd0c8;
-    --software: #b59bf0;
-  }
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #121311;
+  --surface: #1a1b18;
+  --fg: #ecebe5;
+  --muted: #9b9a90;
+  --line: #2c2d29;
+  --accent: #8fc7a6;
+  --accent-soft: #1e2a23;
+  --warn: #ff8a6b;
+  --sage: #2f4a38;
+  --coral: #5a3125;
+  --sky: #1f3446;
+  --lilac: #352c4d;
+  --robotics: #ff8a6b;
+  --cyber: #5fd0c8;
+  --software: #b59bf0;
 }
 
 @theme inline {
@@ -44,6 +48,13 @@
   --color-accent: var(--accent);
   --color-accent-soft: var(--accent-soft);
   --color-warn: var(--warn);
+  --color-sage: var(--sage);
+  --color-coral: var(--coral);
+  --color-sky: var(--sky);
+  --color-lilac: var(--lilac);
+  --color-robotics: var(--robotics);
+  --color-cyber: var(--cyber);
+  --color-software: var(--software);
   /* Small text a step larger than Tailwind's defaults (12px / 14px) for comfortable reading. */
   --text-xs: 0.8125rem;
   --text-xs--line-height: 1.25rem;

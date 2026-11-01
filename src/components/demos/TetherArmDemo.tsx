@@ -69,13 +69,15 @@ type Target = { x: number; y: number }; // normalized pointer, each in [-1, 1]
 function Scene({
   mode,
   sliders,
-  target,
+  targetRef,
   moved,
+  auto,
 }: {
   mode: Mode;
   sliders: number[];
-  target: MutableRefObject<Target>;
+  targetRef: MutableRefObject<Target>;
   moved: number;
+  auto?: boolean;
 }) {
   const motion = useMotionAllowed();
   const invalidate = useThree((s) => s.invalidate);
@@ -103,7 +105,7 @@ function Scene({
 
   // Pointer mode: J1 rolls the arm's plane toward the pointer, the big pitch motors reach for it.
   const solve = (sweeps: number) => {
-    const t = target.current;
+    const t = targetRef.current;
     const x = t.x * 1.8;
     const z = 1.0;
     const a = angles.current;
@@ -122,8 +124,13 @@ function Scene({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode, sliders, moved, motion]);
 
-  useFrame(() => {
+  useFrame(({ clock }) => {
     if (mode !== "pointer" || !motion) return;
+    // Auto mode (the rail preview) traces a slow figure-eight instead of following the pointer.
+    if (auto) {
+      const t = clock.elapsedTime * 0.6;
+      targetRef.current = { x: Math.sin(t) * 0.85, y: Math.sin(t * 2) * 0.55 + 0.1 };
+    }
     solve(2);
     apply();
   });
@@ -267,8 +274,9 @@ export default function TetherArmDemo({
             <Scene
               mode={mode}
               sliders={sliders}
-              target={target}
+              targetRef={target}
               moved={moved}
+              auto={preview}
             />
           </CanvasShell>
         ) : null}

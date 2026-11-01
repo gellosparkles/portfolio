@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useClock, useReducedMotion } from "./hooks";
 
 type Cell = { x: number; y: number; r: number; score: number; filament: boolean };
 
@@ -35,8 +36,12 @@ const CELLS: Cell[] = (() => {
   return out;
 })();
 
-export default function CellFilamentDemo() {
-  const [threshold, setThreshold] = useState(0.5);
+export default function CellFilamentDemo({ active, preview }: { active: boolean; preview?: boolean }) {
+  const [picked, setThreshold] = useState(0.5);
+  const reduced = useReducedMotion();
+  // The rail preview sweeps the threshold up and down so the flagged rings come and go.
+  const t = useClock(!!preview && active && !reduced);
+  const threshold = preview && t ? Math.round((0.5 - 0.35 * Math.cos(t / 1400)) * 100) / 100 : picked;
   const flagged = CELLS.filter((c) => c.score >= threshold).length;
   const pct = Math.round((flagged / CELLS.length) * 100);
 

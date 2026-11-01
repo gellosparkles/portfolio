@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { site } from "@/content/site";
+import ThemeToggle from "./ThemeToggle";
 
 const nav = [
   { href: "/#work", label: "Work" },
@@ -29,6 +30,7 @@ export default function SiteHeader() {
               Resume
             </a>
           )}
+          <ThemeToggle />
         </nav>
       </div>
     </header>

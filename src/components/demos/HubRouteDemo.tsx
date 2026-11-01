@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useReducedMotion } from "./hooks";
+import { useClock, useReducedMotion } from "./hooks";
 
 type Pt = { x: number; y: number };
 
@@ -9,6 +9,7 @@ const W = 480;
 const H = 300;
 const CLUSTER_END = 0.5; // progress at which dots have reached their hubs
 const DURATION = 5500; // ms for the full play
+const HOLD = 2000; // ms the finished routes stay up before a preview loops
 
 // Seeded PRNG so the scatter, hubs and route are identical on every render.
 function rng(seed: number) {
@@ -94,8 +95,10 @@ const ease = (t: number) => t * t * (3 - 2 * t);
 const COLORS = ["var(--color-accent)", "#e0a030", "#c25a8a", "#4aa3a0", "#7a6fd0"];
 const routePoints = routes.map((r) => r.map((p) => `${p.x},${p.y}`).join(" "));
 
-export default function HubRouteDemo({ active }: { active: boolean }) {
+export default function HubRouteDemo({ active, preview }: { active: boolean; preview?: boolean }) {
   const reduced = useReducedMotion();
+  // The rail preview plays on its own, on a loop.
+  const loop = useClock(!!preview && active && !reduced);
   const [progress, setProgress] = useState(0);
   const [playing, setPlaying] = useState(false);
   const from = useRef(0);
@@ -117,7 +120,7 @@ export default function HubRouteDemo({ active }: { active: boolean }) {
   }, [playing, active, reduced]);
 
   // Reduced motion shows the finished state and never animates.
-  const p = reduced ? 1 : progress;
+  const p = reduced ? 1 : preview ? Math.min(1, (loop % (DURATION + HOLD)) / DURATION) : progress;
   const move = ease(Math.min(1, p / CLUSTER_END));
   const clustered = p > 0;
   const routeP = Math.max(0, (p - CLUSTER_END) / (1 - CLUSTER_END));

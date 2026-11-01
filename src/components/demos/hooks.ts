@@ -38,3 +38,25 @@ export function useInView<T extends Element>(rootMargin = "100px") {
 
   return { ref, inView, seen };
 }
+
+/** Milliseconds of running time, ticking every animation frame while `on` and holding still otherwise. */
+export function useClock(on: boolean) {
+  const [t, setT] = useState(0);
+  const base = useRef(0);
+
+  useEffect(() => {
+    if (!on) return;
+    let raf = 0;
+    let start: number | null = null;
+    const tick = (now: number) => {
+      start ??= now - base.current;
+      base.current = now - start;
+      setT(base.current);
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [on]);
+
+  return t;
+}

@@ -2,6 +2,7 @@
 
 import { Canvas, type CanvasProps } from "@react-three/fiber";
 import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { useTheme } from "@/lib/theme";
 
 const MotionContext = createContext(true);
 
@@ -26,6 +27,8 @@ export default function CanvasShell({ label, className, children, ...canvasProps
   const ref = useRef<HTMLDivElement>(null);
   const [inView, setInView] = useState(false);
   const [motion, setMotion] = useState(true);
+  // Scenes read their colours from CSS once; remounting on a theme switch picks up the new palette.
+  const theme = useTheme();
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -46,6 +49,7 @@ export default function CanvasShell({ label, className, children, ...canvasProps
   return (
     <div ref={ref} className={className} role="img" aria-label={label}>
       <Canvas
+        key={theme}
         dpr={[1, 2]}
         frameloop={inView ? (motion ? "always" : "demand") : "never"}
         gl={{ antialias: true, alpha: true }}

@@ -43,7 +43,7 @@ const COMPANIES: { name: string; verdicts: string }[] = [
 
 const STEP_MS = 700;
 
-export default function AuditPipelineDemo({ active }: { active: boolean }) {
+export default function AuditPipelineDemo({ active, preview }: { active: boolean; preview?: boolean }) {
   const [pick, setPick] = useState(0);
   const [stage, setStage] = useState(0);
   const reduced = useReducedMotion();
@@ -57,6 +57,16 @@ export default function AuditPipelineDemo({ active }: { active: boolean }) {
     const t = setTimeout(() => setStage((s) => s + 1), STEP_MS);
     return () => clearTimeout(t);
   }, [active, reduced, stage]);
+
+  // The rail preview moves on to the next company once the verdicts have been on screen a moment.
+  useEffect(() => {
+    if (!preview || !active || reduced || stage < STAGES.length) return;
+    const t = setTimeout(() => {
+      setPick((p) => (p + 1) % COMPANIES.length);
+      setStage(0);
+    }, 2200);
+    return () => clearTimeout(t);
+  }, [preview, active, reduced, stage]);
 
   const company = COMPANIES[pick];
   const verdicts = company.verdicts.split("") as Verdict[];
