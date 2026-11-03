@@ -96,7 +96,6 @@ export const experience: Experience[] = [
     demo: "spiral-sensor",
     cover: { src: "/media/khan-lab/spiral-design.webp", alt: "CAD drawing of the spiral sweat sensor: bottom electrode traces in gold following a continuous blue microfluidic spiral, with a 10 mm scale bar", caption: "My spiral design, rendered from the CAD file: electrodes in gold, the microfluidic channel in blue." },
     media: [
-      { src: "/media/khan-lab/spiral-design.webp", alt: "CAD drawing of the spiral sweat sensor: bottom electrode traces in gold following a continuous blue microfluidic spiral, with a 10 mm scale bar", caption: "My spiral design, rendered from the CAD file: electrodes in gold, the microfluidic channel in blue." },
       { src: "/media/khan-lab/channel-sketch.webp", alt: "Whiteboard sketch of a spiral microfluidic channel with 86 µm and 170 µm widths and 40–50 µL volumes", caption: "Channel widths and volumes, worked out on the whiteboard." },
       { src: "/media/khan-lab/materials-sketch.webp", alt: "Sketch of PVB, PDMS and Parylene C layers over the channel outline", caption: "Choosing the layer stack: PVB, PDMS, Parylene C." },
       { src: "/media/khan-lab/layout-sketch.webp", alt: "Hand sketch of the electrode ring and channel inlets", caption: "Electrode ring and inlets, first pass." },
@@ -123,7 +122,6 @@ export const experience: Experience[] = [
     demo: "hub-route",
     cover: { src: "/media/hubl/simulator.webp", alt: "Hubl's bus simulator 33 minutes into a run: four drop-off hubs, riders waiting at virtual stops and three buses on chained routes", caption: "The routing simulator mid-run: riders grouped into stops, buses chained through them to the hubs." },
     media: [
-      { src: "/media/hubl/simulator.webp", alt: "Hubl's bus simulator 33 minutes into a run: four drop-off hubs, riders waiting at virtual stops and three buses on chained routes", caption: "The routing simulator mid-run: riders grouped into stops, buses chained through them to the hubs." },
       { src: "/media/hubl/team.webp", alt: "The five-person BusIn' team on stage with the $1,000 check and finalist certificates", caption: "The team, right after the win." },
       { src: "/media/hubl/first-place.webp", alt: "Innovate x LA 2025 Design Day and Buildathon first-place certificate", caption: "1st place, Innovate x LA Buildathon." },
       { src: "/media/hubl/prize-check.webp", alt: "Oversized $1,000 prize check made out to BusIn'", caption: "$1,000 prize for the BusIn' pitch." },
@@ -149,7 +147,6 @@ export const experience: Experience[] = [
     cover: { src: "/media/iii/slide-tool-overview-en.webp", alt: "Slide, translated to English: the tool in four stages, LLM generates company data, evidence extraction and merging, ISMS four-step review, LLM cross-check and compliance verdict", caption: "The whole tool on one slide, translated from my Chinese deck.", ratio: "1400 / 788" },
     media: [
       { src: "/media/iii/phase-plan.webp", alt: "Notebook page planning the auditor in three phases with a list of key risks", caption: "Phase plan and risk list, written before any code." },
-      { src: "/media/iii/slide-tool-overview-en.webp", alt: "Slide, translated to English: the tool in four stages, LLM generates company data, evidence extraction and merging, ISMS four-step review, LLM cross-check and compliance verdict", caption: "The tool in four stages (translated).", slide: true },
       { src: "/media/iii/slide-pipeline.webp", alt: "Slide: analysis pipeline from reading evidence to JSON and Markdown output, run on Gemini 3.5 Flash and Grok 4.2", caption: "Evidence in, verdict out as JSON and Markdown.", slide: true },
       { src: "/media/iii/slide-isms-review.webp", alt: "Slide: four ISMS checkpoints, mechanism, execution, continuity and review, mapped to non-, partial and full compliance", caption: "Four checkpoints decide the compliance level.", slide: true },
       { src: "/media/iii/slide-llm-crosscheck.webp", alt: "Slide: Gemini and Grok each judge three times and the median verdict is kept", caption: "Two models, three runs each, median verdict.", slide: true },

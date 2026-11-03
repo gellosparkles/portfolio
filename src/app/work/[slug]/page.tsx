@@ -26,8 +26,10 @@ export default async function WorkPage({ params }: PageProps<"/work/[slug]">) {
   const w = work[i];
   const prev = work[i - 1];
   const next = work[i + 1];
-  const photos = w.media?.filter((m) => !m.slide) ?? [];
-  const slides = w.media?.filter((m) => m.slide) ?? [];
+  // The build log skips the photo already shown for this project on the home page.
+  const log = w.media?.filter((m) => m.src !== w.cover?.src) ?? [];
+  const photos = log.filter((m) => !m.slide);
+  const slides = log.filter((m) => m.slide);
 
   return (
     <ViewTransition enter={slide} exit={slide} default="none">
@@ -58,11 +60,11 @@ export default async function WorkPage({ params }: PageProps<"/work/[slug]">) {
           </section>
         </ViewTransition>
 
-        {w.media && (
+        {log.length > 0 && (
           <section aria-labelledby="build-log" className="mt-10">
             <p id="build-log" className="label flex items-center justify-center gap-2">
               <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-accent" />
-              Build log · {w.media.length} {w.media.length === 1 ? "photo" : "photos"} from the process
+              Build log · {log.length} {log.length === 1 ? "photo" : "photos"} from the process
             </p>
             {/* One shared height keeps portrait notebook pages and landscape bench shots at their own ratios, centred per row. */}
             <div className="mt-4 flex flex-wrap justify-center gap-4">

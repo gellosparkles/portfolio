@@ -49,7 +49,6 @@ export const work: Work[] = [
     chips: cell.tags,
     demo: "cell-filament",
     cover: { src: "/media/cell-filament/filament-calls.webp", alt: "Fluorescence micrograph of CTPS-stained cells with every nucleus circled, red circles on cells with filaments and blue on cells without", caption: "Real microscopy from the workshop deck: every nucleus circled, red with a filament, blue without.", ratio: "1600 / 1013" },
-    media: [{ src: "/media/cell-filament/filament-calls.webp", alt: "Fluorescence micrograph of CTPS-stained cells with every nucleus circled, red circles on cells with filaments and blue on cells without", caption: "Real microscopy from the workshop deck: every nucleus circled, red with a filament, blue without.", ratio: "1600 / 1013" }],
   },
 ];
 
