@@ -120,7 +120,7 @@ export const experience: Experience[] = [
       "Hubl won 1st place at the USC Buildathon and 2nd at Games Week, and joined the Greif Incubator.",
     ],
     demo: "hub-route",
-    cover: { src: "/media/hubl/simulator.webp", alt: "Hubl's bus simulator 33 minutes into a run: four drop-off hubs, riders waiting at virtual stops and three buses on chained routes", caption: "The routing simulator mid-run: riders grouped into stops, buses chained through them to the hubs." },
+    cover: { src: "/media/hubl/simulator.webp", alt: "Hubl's bus simulator 14 minutes into a run on an OpenStreetMap map of LA: four drop-off hubs, riders waiting at virtual stops and buses on road-following routes", caption: "The routing simulator mid-run: riders grouped into stops, buses routed along real LA streets to the hubs. Map © OpenStreetMap contributors." },
     media: [
       { src: "/media/hubl/team.webp", alt: "The five-person BusIn' team on stage with the $1,000 check and finalist certificates", caption: "The team, right after the win." },
       { src: "/media/hubl/first-place.webp", alt: "Innovate x LA 2025 Design Day and Buildathon first-place certificate", caption: "1st place, Innovate x LA Buildathon." },
