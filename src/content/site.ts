@@ -98,8 +98,9 @@ export const experience: Experience[] = [
       "The lab confirmed the redesign was more reliable and performed better in experiments. Two co-authored manuscripts on the work are to appear in 2026.",
     ],
     demo: "spiral-sensor",
-    cover: { src: "/media/khan-lab/channel-sketch.webp", alt: "Whiteboard sketch of a spiral microfluidic channel with 86 µm and 170 µm widths", caption: "The spiral, worked out on a whiteboard before it was cut." },
+    cover: { src: "/media/khan-lab/spiral-design.webp", alt: "CAD drawing of the spiral sweat sensor: bottom electrode traces in gold following a continuous blue microfluidic spiral, with a 10 mm scale bar", caption: "My spiral design, rendered from the CAD file: electrodes in gold, the microfluidic channel in blue." },
     media: [
+      { src: "/media/khan-lab/spiral-design.webp", alt: "CAD drawing of the spiral sweat sensor: bottom electrode traces in gold following a continuous blue microfluidic spiral, with a 10 mm scale bar", caption: "My spiral design, rendered from the CAD file: electrodes in gold, the microfluidic channel in blue." },
       { src: "/media/khan-lab/channel-sketch.webp", alt: "Whiteboard sketch of a spiral microfluidic channel with 86 µm and 170 µm widths and 40–50 µL volumes", caption: "Channel widths and volumes, worked out on the whiteboard." },
       { src: "/media/khan-lab/materials-sketch.webp", alt: "Sketch of PVB, PDMS and Parylene C layers over the channel outline", caption: "Choosing the layer stack: PVB, PDMS, Parylene C." },
       { src: "/media/khan-lab/layout-sketch.webp", alt: "Hand sketch of the electrode ring and channel inlets", caption: "Electrode ring and inlets, first pass." },
