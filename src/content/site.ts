@@ -215,7 +215,7 @@ export const experience: Experience[] = [
       "An ESP32-CAM reads Sudoku digits on device, and my solver finishes in under 0.2 s.",
     ],
     demo: "case-studies",
-    cover: { src: "/media/chang-gung/prototype.webp", alt: "Three views of the Sudoku prototype: an ESP32-CAM in a LEGO housing standing over handwritten digits on an iPad", caption: "The prototype: an ESP32-CAM in a LEGO housing, reading digits off a backlit iPad.", ratio: "1219 / 520" },
+    cover: { src: "/media/chang-gung/prototype.webp", alt: "Three views of the Sudoku prototype: an ESP32-CAM in a LEGO housing standing over handwritten digits on an iPad", caption: "The prototype: an ESP32-CAM in a LEGO housing, reading digits off a backlit iPad.", ratio: "1668 / 720" },
   },
 ];
 
