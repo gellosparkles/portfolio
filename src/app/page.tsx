@@ -25,12 +25,12 @@ function Heading({ id, title, aside }: { id: string; title: string; aside?: Reac
   );
 }
 
-function Photo({ src, alt, caption, focus, fig, className = "", imgClass = "" }: { src: string; alt: string; caption: string; focus?: string; fig: number; className?: string; imgClass?: string }) {
+function Photo({ src, alt, caption, focus, ratio, fig, className = "", imgClass = "" }: { src: string; alt: string; caption: string; focus?: string; ratio?: string; fig: number; className?: string; imgClass?: string }) {
   return (
     <figure className={className}>
       <div className="print">
         {/* eslint-disable-next-line @next/next/no-img-element -- pre-sized WebP/JPEG; next/image adds nothing here */}
-        <img src={src} alt={alt} loading="lazy" className={`block w-full object-cover ${imgClass}`} style={{ objectPosition: focus }} />
+        <img src={src} alt={alt} loading="lazy" className={`block w-full object-cover ${imgClass}`} style={{ objectPosition: focus, aspectRatio: ratio }} />
       </div>
       <figcaption className="mt-2 text-xs leading-snug text-muted">
         <span className="font-mono text-accent">Fig. {fig}</span> {caption}

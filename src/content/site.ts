@@ -75,8 +75,9 @@ export type Experience = {
 };
 
 // Slides render as an overlapping deck on the work page instead of the photo row.
-// `focus` is a CSS object-position for crops (e.g. "top" to keep the first lines of a notebook page).
-export type Media = { src: string; alt: string; caption: string; slide?: true; focus?: string };
+// `focus` is a CSS object-position for crops (e.g. "top" to keep the first lines of a notebook page);
+// `ratio` overrides the home page's 3:2 crop for images that must be shown whole.
+export type Media = { src: string; alt: string; caption: string; slide?: true; focus?: string; ratio?: string };
 
 // Resume order. One sentence and 2–4 chips per role; the resume bullets are not reproduced.
 export const experience: Experience[] = [
@@ -123,8 +124,9 @@ export const experience: Experience[] = [
       "Hubl won 1st place at the USC Buildathon and 2nd at Games Week, and joined the Greif Incubator.",
     ],
     demo: "hub-route",
-    cover: { src: "/media/hubl/user-flow.webp", alt: "Handwritten four-step booking flow: view trips, pick time, reserve, invite friends", caption: "The four-step booking flow, on paper first.", focus: "top" },
+    cover: { src: "/media/hubl/simulator.webp", alt: "Hubl's bus simulator 33 minutes into a run: four drop-off hubs, riders waiting at virtual stops and three buses on chained routes", caption: "The routing simulator mid-run: riders grouped into stops, buses chained through them to the hubs." },
     media: [
+      { src: "/media/hubl/simulator.webp", alt: "Hubl's bus simulator 33 minutes into a run: four drop-off hubs, riders waiting at virtual stops and three buses on chained routes", caption: "The routing simulator mid-run: riders grouped into stops, buses chained through them to the hubs." },
       { src: "/media/hubl/team.webp", alt: "The five-person BusIn' team on stage with the $1,000 check and finalist certificates", caption: "The team, right after the win." },
       { src: "/media/hubl/first-place.webp", alt: "Innovate x LA 2025 Design Day and Buildathon first-place certificate", caption: "1st place, Innovate x LA Buildathon." },
       { src: "/media/hubl/prize-check.webp", alt: "Oversized $1,000 prize check made out to BusIn'", caption: "$1,000 prize for the BusIn' pitch." },
@@ -147,10 +149,10 @@ export const experience: Experience[] = [
       "Every company, document and verdict in the demo is synthetic.",
     ],
     demo: "audit-pipeline",
-    cover: { src: "/media/iii/phase-plan.webp", alt: "Notebook page planning the auditor in three phases with a list of key risks", caption: "The plan and risk list, on paper before any code.", focus: "top" },
+    cover: { src: "/media/iii/slide-tool-overview-en.webp", alt: "Slide, translated to English: the tool in four stages, LLM generates company data, evidence extraction and merging, ISMS four-step review, LLM cross-check and compliance verdict", caption: "The whole tool on one slide, translated from my Chinese deck.", ratio: "1400 / 788" },
     media: [
       { src: "/media/iii/phase-plan.webp", alt: "Notebook page planning the auditor in three phases with a list of key risks", caption: "Phase plan and risk list, written before any code." },
-      { src: "/media/iii/slide-tool-overview.webp", alt: "Slide: the tool in four stages, LLM-generated company data, evidence extraction, four-step ISMS review and LLM cross-check", caption: "The tool in four stages.", slide: true },
+      { src: "/media/iii/slide-tool-overview-en.webp", alt: "Slide, translated to English: the tool in four stages, LLM generates company data, evidence extraction and merging, ISMS four-step review, LLM cross-check and compliance verdict", caption: "The tool in four stages (translated).", slide: true },
       { src: "/media/iii/slide-pipeline.webp", alt: "Slide: analysis pipeline from reading evidence to JSON and Markdown output, run on Gemini 3.5 Flash and Grok 4.2", caption: "Evidence in, verdict out as JSON and Markdown.", slide: true },
       { src: "/media/iii/slide-isms-review.webp", alt: "Slide: four ISMS checkpoints, mechanism, execution, continuity and review, mapped to non-, partial and full compliance", caption: "Four checkpoints decide the compliance level.", slide: true },
       { src: "/media/iii/slide-llm-crosscheck.webp", alt: "Slide: Gemini and Grok each judge three times and the median verdict is kept", caption: "Two models, three runs each, median verdict.", slide: true },
@@ -216,7 +218,7 @@ export const experience: Experience[] = [
       "An ESP32-CAM reads Sudoku digits on device, and my solver finishes in under 0.2 s.",
     ],
     demo: "case-studies",
-    cover: { src: "/projects/sudoku/detection-output.jpg", alt: "Serial monitor output listing detected digits with confidence scores and bounding boxes", caption: "The ESP32-CAM reporting the digits it found, with confidence and position.", focus: "top" },
+    cover: { src: "/media/chang-gung/prototype.webp", alt: "Three views of the Sudoku prototype: an ESP32-CAM in a LEGO housing standing over handwritten digits on an iPad", caption: "The prototype: an ESP32-CAM in a LEGO housing, reading digits off a backlit iPad.", ratio: "1219 / 520" },
   },
 ];
 
