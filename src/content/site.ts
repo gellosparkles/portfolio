@@ -12,12 +12,8 @@ export const site = {
   // Home-page intro, first person. Every claim here is backed by an entry in `experience` below.
   intro:
     "I study electrical and computer engineering at USC, and I like the point where a model has to meet real hardware. Lately that has meant redesigning a sweat sensor so it stops leaking, wiring power and control for a seven-joint robot arm, and starting an event-bus company whose first trip sold out in three days.",
-  // Real photos for the hero, captioned like figures in a notebook.
-  heroPhotos: [
-    { src: "/media/hubl/team.webp", alt: "The five-person BusIn' team on stage with the $1,000 check and finalist certificates", caption: "Hubl's team after taking 1st at the Innovate x LA Buildathon." },
-    { src: "/media/terra-labs/arm-sketch.webp", alt: "Whiteboard sketch of the robot arm's joints, motors and battery placement", caption: "Tether's joints and battery, Terra Labs." },
-    { src: "/media/khan-lab/stencil-cutouts.webp", alt: "Small cut-out stencils of the channel design", caption: "Spiral-channel stencils, Khan Lab." },
-  ],
+  // Professional headshot for the hero, served from /public. Until it is set, the hero shows a placeholder frame.
+  headshot: null as { src: string; alt: string } | null,
   links: {
     email: "hansilee@usc.edu" as string | null,
     linkedin: "https://www.linkedin.com/in/tzjinglee" as string | null,

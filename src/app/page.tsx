@@ -48,15 +48,14 @@ export default function Home() {
     resume && { label: "Resume", href: resume, text: "PDF, one page" },
   ].filter(Boolean) as { label: string; href: string; text: string }[];
   const [primary, ...rest] = contacts;
-  const [lead, ...side] = site.heroPhotos;
-  let fig = site.heroPhotos.length;
+  let fig = 0;
 
   return (
     <ViewTransition enter={slide} exit={slide} default="none">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        {/* Hero: who I am in my own words, next to photos from the work */}
+        {/* Hero: who I am in my own words, next to a headshot */}
         <section className="grid gap-10 pb-14 pt-10 md:grid-cols-12 md:gap-12 md:pt-16">
-          <div className="md:col-span-6 md:pt-4">
+          <div className="md:col-span-7 md:pt-4">
             <p className="font-mono text-xs text-muted">
               {site.location} · USC Viterbi ECE · {site.graduation}
             </p>
@@ -79,11 +78,24 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4 md:col-span-6">
-            <Photo {...lead} fig={1} className="col-span-2" imgClass="aspect-[3/2]" />
-            {side.map((p, i) => (
-              <Photo key={p.src} {...p} fig={i + 2} imgClass="aspect-square" />
-            ))}
+          <div className="md:col-span-5">
+            <div className="print mx-auto w-full max-w-sm md:ml-auto md:mr-0">
+              {site.headshot ? (
+                // eslint-disable-next-line @next/next/no-img-element -- a single pre-sized portrait; next/image adds nothing here
+                <img src={site.headshot.src} alt={site.headshot.alt} className="block aspect-[4/5] w-full object-cover" />
+              ) : (
+                // Placeholder until site.headshot is set in src/content/site.ts.
+                <div className="grid aspect-[4/5] w-full place-items-center border border-dashed border-line bg-bg text-muted">
+                  <div className="text-center">
+                    <svg aria-hidden viewBox="0 0 64 64" className="mx-auto h-16 w-16" fill="none" stroke="currentColor" strokeWidth="1.5">
+                      <circle cx="32" cy="24" r="11" />
+                      <path d="M12 56c2-11 10-17 20-17s18 6 20 17" />
+                    </svg>
+                    <p className="label mt-3">Headshot</p>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </section>
 
