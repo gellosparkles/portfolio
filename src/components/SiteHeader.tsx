@@ -11,22 +11,19 @@ const nav = [
 
 export default function SiteHeader() {
   return (
-    <header className="sticky top-0 z-40 border-b border-line/70 bg-bg/80 backdrop-blur" style={{ viewTransitionName: "site-header" }}>
-      <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4 sm:px-6">
-        <Link href="/" className="font-semibold tracking-tight">
+    <header className="sticky top-0 z-40 border-b border-line bg-bg/90 backdrop-blur" style={{ viewTransitionName: "site-header" }}>
+      <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
+        <Link href="/" className="font-serif text-xl tracking-tight">
           {site.name}
         </Link>
-        <nav className="flex items-center gap-4 text-sm text-muted sm:gap-6">
+        <nav className="flex items-center gap-5 text-sm sm:gap-7">
           {nav.map((n) => (
-            <Link key={n.href} href={n.href} className="label hidden hover:text-fg sm:inline">
+            <Link key={n.href} href={n.href} className="hidden text-muted transition-colors hover:text-fg sm:inline">
               {n.label}
             </Link>
           ))}
           {site.links.resume && (
-            <a
-              href={site.links.resume}
-              className="rounded-full border border-line px-3 py-1 text-fg hover:border-accent"
-            >
+            <a href={site.links.resume} className="ink-link font-medium">
               Resume
             </a>
           )}

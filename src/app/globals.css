@@ -1,34 +1,35 @@
 @import "tailwindcss";
 
-/* Light by default: warm paper, hairline rules, sage, coral and ink accents. Dark is opt-in via the header toggle. */
+/* Light by default: warm paper, near-black ink, hairline rules and one accent (whiteboard-marker blue).
+   The remaining hues exist for the interactive demos. Dark is opt-in via the header toggle. */
 :root {
   color-scheme: light;
-  --bg: #f4f2ec;
-  --surface: #fbfaf7;
-  --fg: #151513;
-  --muted: #66655d;
-  --line: #dddad0;
-  --accent: #2f6b4f;
-  --accent-soft: #dfeadf;
-  --warn: #d9583a;
-  --sage: #b9d3bc;
-  --coral: #f3b39d;
-  --sky: #b9d2e8;
-  --lilac: #d4c6ef;
-  --robotics: #d9583a;
-  --cyber: #1f8a86;
-  --software: #7a55c4;
+  --bg: #f7f5f0;
+  --surface: #fffefb;
+  --fg: #161512;
+  --muted: #5c5a53;
+  --line: #e0dcd2;
+  --accent: #2347b8;
+  --accent-soft: #e3e8f6;
+  --warn: #c8461f;
+  --sage: #c9dccb;
+  --coral: #f1c2b0;
+  --sky: #c8d8ea;
+  --lilac: #dcd2ef;
+  --robotics: #c8461f;
+  --cyber: #17716d;
+  --software: #6a47b0;
 }
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --bg: #121311;
-  --surface: #1a1b18;
-  --fg: #ecebe5;
-  --muted: #9b9a90;
-  --line: #2c2d29;
-  --accent: #8fc7a6;
-  --accent-soft: #1e2a23;
+  --bg: #141412;
+  --surface: #1b1b18;
+  --fg: #eceae4;
+  --muted: #a09e95;
+  --line: #2e2e2a;
+  --accent: #9fb4f2;
+  --accent-soft: #1f2640;
   --warn: #ff8a6b;
   --sage: #2f4a38;
   --coral: #5a3125;
@@ -60,8 +61,9 @@
   --text-xs--line-height: 1.25rem;
   --text-sm: 0.9375rem;
   --text-sm--line-height: 1.4rem;
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-plex-sans);
+  --font-mono: var(--font-plex-mono);
+  --font-serif: var(--font-newsreader);
 }
 
 html {
@@ -73,20 +75,6 @@ body {
   color: var(--fg);
 }
 
-/* Faint vertical hairlines down the page, aligned to the content column. */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background-image: linear-gradient(to right, var(--line) 1px, transparent 1px);
-  background-size: 25% 100%;
-  background-position: center;
-  opacity: 0.45;
-  margin: 0 max(16px, calc((100vw - 64rem) / 2));
-}
-
 ::selection {
   background: var(--accent-soft);
 }
@@ -95,59 +83,29 @@ body::before {
 .label {
   font-family: var(--font-mono);
   font-size: 0.75rem;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--muted);
 }
 
-/* Soft blurred colour fields behind the hero. */
-.blob {
-  position: absolute;
-  border-radius: 9999px;
-  filter: blur(64px);
-  opacity: 0.8;
-  pointer-events: none;
-  animation: drift 18s ease-in-out infinite alternate;
+/* Links in running text: a quiet underline that darkens on hover. */
+.ink-link {
+  text-decoration: underline;
+  text-decoration-color: var(--line);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+  transition: text-decoration-color 150ms;
 }
-@keyframes drift {
-  to {
-    transform: translate3d(24px, -18px, 0) scale(1.08);
-  }
+.ink-link:hover {
+  text-decoration-color: currentColor;
 }
 
-/* Photo strip under the stats: two copies of the track loop seamlessly; hover pauses it. */
-.marquee {
-  mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
-}
-.marquee-track {
-  animation: marquee 90s linear infinite;
-}
-.marquee:hover .marquee-track {
-  animation-play-state: paused;
-}
-@keyframes marquee {
-  to {
-    transform: translate3d(-50%, 0, 0);
-  }
-}
-
-/* Home rail: one panel in focus, neighbours eased back. */
-.rail {
-  scroll-snap-type: x mandatory;
-  scrollbar-width: none;
-}
-.rail::-webkit-scrollbar {
-  display: none;
-}
-.rail > * {
-  scroll-snap-align: center;
-  transition:
-    transform 500ms cubic-bezier(0.2, 0.7, 0.2, 1),
-    opacity 500ms ease;
-}
-.rail > [data-focus="false"] {
-  transform: scale(0.94);
-  opacity: 0.55;
+/* Captioned photos: a thin white mat, the way a print sits on a page. */
+.print {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  padding: 6px;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.04), 0 8px 24px -16px rgb(0 0 0 / 0.25);
 }
 
 /* View transitions: slide between pages, morph the demo window, keep the header still. */
@@ -224,18 +182,6 @@ body::before {
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
-  }
-  .blob {
-    animation: none;
-  }
-  .marquee {
-    overflow-x: auto;
-  }
-  .marquee-track {
-    animation: none;
-  }
-  .rail > * {
-    transition: none;
   }
   ::view-transition-old(*),
   ::view-transition-new(*),

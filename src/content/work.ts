@@ -14,6 +14,7 @@ export type Work = {
   demo: DemoId;
   link?: { label: string; href: string };
   media?: Media[];
+  cover?: Media;
 };
 
 const cell = projects.find((p) => p.slug === "cell-filament-tool")!;
@@ -31,6 +32,7 @@ export const work: Work[] = [
     demo: e.demo,
     link: e.link,
     media: e.media,
+    cover: e.cover,
   })),
   {
     slug: "cell-filament",

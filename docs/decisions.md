@@ -12,11 +12,11 @@ These were settled in the grilling session on 2026-10-11. Raw facts are in [sour
 | 6 | Deploy flow | GitHub repo connected to Vercel (git push deploys). The user signs in to GitHub with Google. | Gives preview deployments per branch, and the repo itself counts as a portfolio piece. |
 | 7 | Stack | Next.js 16 (App Router, statically prerendered) + React 19 + TypeScript + Tailwind v4. **3D: three.js via @react-three/fiber + drei.** | User asked for React with interactive 3D. |
 | 8 | Structure | Home page (hero, about, featured projects, publication, honors, skills, contact) plus one case-study page per project | Recruiters skim the home page in 30 seconds. Engineers click through to the depth. |
-| 9 | Look | Minimal, typographic, light and dark from the OS setting, one accent color. The 3D is purposeful (it shows real data) rather than decorative. | Clarity reads better than flash to ML recruiters. |
+| 9 | Look | **Revised 2026-11-03 ("Bench notes", see [redesign.md](redesign.md)):** light paper and dark ink, a Newsreader serif with IBM Plex, one marker-blue accent, and real build photos as captioned figures on the home page. The 3D now appears only where it shows real data, on the case-study pages. | The first version read as template-made to recruiters. The photos are the most credible proof that the work happened. |
 | 10 | Contact | Plain email link and LinkedIn, no form. **Vercel Web Analytics** is on. | No backend, no spam. Analytics needs no cookie banner. |
 
 ## 3D pieces (each one shows something true)
-- **Home hero:** a neural network you can interact with. Its layers echo the gesture model: per-frame CNN features feed a GRU, which feeds 5 classes.
+- **Home hero:** removed in the 2026-11-03 redesign. Real photos took its place.
 - **Gesture case study:** a 3D bar chart of the paper's real confusion matrices (32 test clips each), with a toggle between MobileNet+GRU and RNN+GRU. An HTML table gives the same data for screen readers.
 - **Sudoku case study:** a 3D board that solves a puzzle live with backtracking, which is the solver half of the project.
 

@@ -15,12 +15,12 @@ export function CaseStudyHeader({
   link?: { href: string; label: string };
 }) {
   return (
-    <header className="mx-auto max-w-5xl px-4 pt-10 sm:px-6">
+    <header className="mx-auto max-w-6xl px-4 pt-10 sm:px-6">
       <Link href="/#research" className="label hover:text-fg">
         ← Back
       </Link>
       <p className="mt-6 font-mono text-xs uppercase tracking-widest text-accent">{kicker}</p>
-      <h1 className="mt-2 max-w-3xl text-3xl font-semibold tracking-tight sm:text-4xl">{title}</h1>
+      <h1 className="mt-2 max-w-3xl font-serif text-4xl tracking-tight sm:text-5xl">{title}</h1>
       <p className="mt-4 max-w-3xl text-lg leading-relaxed text-muted">{lede}</p>
       {link && (
         <a href={link.href} target="_blank" rel="noreferrer" className="mt-4 inline-block text-sm font-medium text-accent hover:underline">
@@ -41,8 +41,8 @@ export function CaseStudyHeader({
 
 export function Block({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <section className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
-      <h2 className="text-xl font-semibold tracking-tight">{title}</h2>
+    <section className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
+      <h2 className="font-serif text-2xl tracking-tight">{title}</h2>
       <div className="mt-4 space-y-4 leading-relaxed">{children}</div>
     </section>
   );

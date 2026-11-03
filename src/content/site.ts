@@ -9,6 +9,15 @@ export const site = {
   focus: "AI + Hardware Systems",
   tagline: "AI that runs on real hardware.",
   seeking: "Seeking Summer 2027 internships in AI and hardware systems.",
+  // Home-page intro, first person. Every claim here is backed by an entry in `experience` below.
+  intro:
+    "I study electrical and computer engineering at USC, and I like the point where a model has to meet real hardware. Lately that has meant redesigning a sweat sensor so it stops leaking, wiring power and control for a seven-joint robot arm, and starting an event-bus company whose first trip sold out in three days.",
+  // Real photos for the hero, captioned like figures in a notebook.
+  heroPhotos: [
+    { src: "/media/hubl/team.webp", alt: "The five-person BusIn' team on stage with the $1,000 check and finalist certificates", caption: "Hubl's team after taking 1st at the Innovate x LA Buildathon." },
+    { src: "/media/terra-labs/arm-sketch.webp", alt: "Whiteboard sketch of the robot arm's joints, motors and battery placement", caption: "Tether's joints and battery, Terra Labs." },
+    { src: "/media/khan-lab/stencil-cutouts.webp", alt: "Small cut-out stencils of the channel design", caption: "Spiral-channel stencils, Khan Lab." },
+  ],
   links: {
     email: "hansilee@usc.edu" as string | null,
     linkedin: "https://www.linkedin.com/in/tzjinglee" as string | null,
@@ -61,10 +70,13 @@ export type Experience = {
   link?: { label: string; href: string };
   /** Process photos for the detail page's build log, served from /public/media/<slug>/. */
   media?: Media[];
+  /** The photo that leads this project's spread on the home page. */
+  cover?: Media;
 };
 
 // Slides render as an overlapping deck on the work page instead of the photo row.
-export type Media = { src: string; alt: string; caption: string; slide?: true };
+// `focus` is a CSS object-position for crops (e.g. "top" to keep the first lines of a notebook page).
+export type Media = { src: string; alt: string; caption: string; slide?: true; focus?: string };
 
 // Resume order. One sentence and 2–4 chips per role; the resume bullets are not reproduced.
 export const experience: Experience[] = [
@@ -85,6 +97,7 @@ export const experience: Experience[] = [
       "The lab confirmed the redesign was more reliable and performed better in experiments. Two co-authored manuscripts on the work are to appear in 2026.",
     ],
     demo: "spiral-sensor",
+    cover: { src: "/media/khan-lab/channel-sketch.webp", alt: "Whiteboard sketch of a spiral microfluidic channel with 86 µm and 170 µm widths", caption: "The spiral, worked out on a whiteboard before it was cut." },
     media: [
       { src: "/media/khan-lab/channel-sketch.webp", alt: "Whiteboard sketch of a spiral microfluidic channel with 86 µm and 170 µm widths and 40–50 µL volumes", caption: "Channel widths and volumes, worked out on the whiteboard." },
       { src: "/media/khan-lab/materials-sketch.webp", alt: "Sketch of PVB, PDMS and Parylene C layers over the channel outline", caption: "Choosing the layer stack: PVB, PDMS, Parylene C." },
@@ -110,6 +123,7 @@ export const experience: Experience[] = [
       "Hubl won 1st place at the USC Buildathon and 2nd at Games Week, and joined the Greif Incubator.",
     ],
     demo: "hub-route",
+    cover: { src: "/media/hubl/user-flow.webp", alt: "Handwritten four-step booking flow: view trips, pick time, reserve, invite friends", caption: "The four-step booking flow, on paper first.", focus: "top" },
     media: [
       { src: "/media/hubl/team.webp", alt: "The five-person BusIn' team on stage with the $1,000 check and finalist certificates", caption: "The team, right after the win." },
       { src: "/media/hubl/first-place.webp", alt: "Innovate x LA 2025 Design Day and Buildathon first-place certificate", caption: "1st place, Innovate x LA Buildathon." },
@@ -133,6 +147,7 @@ export const experience: Experience[] = [
       "Every company, document and verdict in the demo is synthetic.",
     ],
     demo: "audit-pipeline",
+    cover: { src: "/media/iii/phase-plan.webp", alt: "Notebook page planning the auditor in three phases with a list of key risks", caption: "The plan and risk list, on paper before any code.", focus: "top" },
     media: [
       { src: "/media/iii/phase-plan.webp", alt: "Notebook page planning the auditor in three phases with a list of key risks", caption: "Phase plan and risk list, written before any code." },
       { src: "/media/iii/slide-tool-overview.webp", alt: "Slide: the tool in four stages, LLM-generated company data, evidence extraction, four-step ISMS review and LLM cross-check", caption: "The tool in four stages.", slide: true },
@@ -156,6 +171,7 @@ export const experience: Experience[] = [
       "STUN finds a direct path through the NAT. When there isn't one, the stream falls back to a TURN relay.",
     ],
     demo: "connection-path",
+    cover: { src: "/media/yesturnkey/desk.webp", alt: "Internship workstation with a monitor, laptop, Raspberry Pi and network cabling", caption: "The bench: Pi, laptop and the network it had to get through." },
     media: [
       { src: "/media/yesturnkey/desk.webp", alt: "Internship workstation with a monitor, laptop, Raspberry Pi and network cabling", caption: "The bench: Pi, laptop and the network it had to get through." },
     ],
@@ -176,6 +192,7 @@ export const experience: Experience[] = [
       "The arm in the demo is a stand-in, not the real model.",
     ],
     demo: "tether-arm",
+    cover: { src: "/media/terra-labs/actuator-bench.webp", alt: "Joint actuators wired to a CAN bus on a bench supply at 24 V", caption: "Joint actuators on the CAN bus at 24 V." },
     media: [
       { src: "/media/terra-labs/arm-sketch.webp", alt: "Whiteboard sketch of the robot arm's joints, motors and battery placement", caption: "Whiteboard layout of joints, motors and battery." },
       { src: "/media/terra-labs/actuator-bench.webp", alt: "Joint actuators wired to a CAN bus on a bench supply at 24 V", caption: "Actuators on the CAN bus at 24 V." },
@@ -199,6 +216,7 @@ export const experience: Experience[] = [
       "An ESP32-CAM reads Sudoku digits on device, and my solver finishes in under 0.2 s.",
     ],
     demo: "case-studies",
+    cover: { src: "/projects/sudoku/detection-output.jpg", alt: "Serial monitor output listing detected digits with confidence scores and bounding boxes", caption: "The ESP32-CAM reporting the digits it found, with confidence and position.", focus: "top" },
   },
 ];
 

@@ -31,7 +31,7 @@ export default async function WorkPage({ params }: PageProps<"/work/[slug]">) {
 
   return (
     <ViewTransition enter={slide} exit={slide} default="none">
-      <article className="mx-auto max-w-5xl px-4 pb-20 pt-8 sm:px-6">
+      <article className="mx-auto max-w-6xl px-4 pb-20 pt-8 sm:px-6">
         <Link href="/#work" transitionTypes={["nav-back"]} className="label hover:text-fg">
           ← All work
         </Link>
@@ -42,12 +42,12 @@ export default async function WorkPage({ params }: PageProps<"/work/[slug]">) {
               {w.kicker} · {w.when}
             </p>
             <ViewTransition name={`title-${w.slug}`} share="morph" default="none">
-              <h1 className="mt-3 text-4xl font-semibold tracking-tight sm:text-6xl">{w.title}</h1>
+              <h1 className="mt-3 font-serif text-5xl tracking-tight sm:text-7xl">{w.title}</h1>
             </ViewTransition>
             <p className="mt-4 max-w-xl text-lg text-muted">{w.hook}</p>
           </div>
           <p className="md:text-right">
-            <span className="block font-mono text-6xl font-medium tracking-tight sm:text-7xl">{w.big.value}</span>
+            <span className="block font-serif text-6xl tracking-tight sm:text-7xl">{w.big.value}</span>
             <span className="label">{w.big.unit}</span>
           </p>
         </header>
@@ -132,7 +132,7 @@ export default async function WorkPage({ params }: PageProps<"/work/[slug]">) {
           {prev ? (
             <Link href={`/work/${prev.slug}`} transitionTypes={["nav-back"]} className="group">
               <span className="label">← Previous</span>
-              <span className="mt-1 block font-medium group-hover:text-accent">{prev.title}</span>
+              <span className="mt-1 block font-serif text-2xl group-hover:text-accent">{prev.title}</span>
             </Link>
           ) : (
             <span />
@@ -140,7 +140,7 @@ export default async function WorkPage({ params }: PageProps<"/work/[slug]">) {
           {next && (
             <Link href={`/work/${next.slug}`} transitionTypes={["nav-forward"]} className="group text-right">
               <span className="label">Next →</span>
-              <span className="mt-1 block font-medium group-hover:text-accent">{next.title}</span>
+              <span className="mt-1 block font-serif text-2xl group-hover:text-accent">{next.title}</span>
             </Link>
           )}
         </nav>
