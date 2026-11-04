@@ -8,6 +8,7 @@ import CanvasShell, {
   useMotionAllowed,
 } from "../three/CanvasShell";
 import { useReducedMotion } from "./hooks";
+import TryHint from "@/components/TryHint";
 
 type Mode = "published" | "redesign";
 
@@ -284,10 +285,8 @@ function Scene({ mode, run }: { mode: Mode; run: number }) {
 }
 
 const DESCRIPTION: Record<Mode, string> = {
-  published:
-    "Published: half-circle arches joined by hairpin turns. Fluid leaks at every turn.",
-  redesign:
-    "My redesign: one smooth full-circle spiral. No sharp turns, no leaks.",
+  published: "Published: hairpin turns, and fluid leaks at each one.",
+  redesign: "My redesign: one smooth spiral, nothing to leak.",
 };
 
 export default function SpiralSensorDemo({
@@ -310,6 +309,7 @@ export default function SpiralSensorDemo({
 
   return (
     <div className="mx-auto max-w-xl">
+      {!preview && <TryHint className="mb-3">Switch designs to watch the fluid flow</TryHint>}
       <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl border border-line bg-bg">
         {active ? (
           <CanvasShell
@@ -363,8 +363,7 @@ export default function SpiralSensorDemo({
             {DESCRIPTION[mode]}
           </p>
           <p className="mt-1 text-xs text-muted">
-            Generic illustration; both spirals are stylized and not the real lab
-            layout. Original design:{" "}
+            Stylized, not the lab layout. Original:{" "}
             <a
               href="https://ieeexplore.ieee.org/document/11033194"
               target="_blank"

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useClock, useReducedMotion } from "./hooks";
+import TryHint from "@/components/TryHint";
 
 type Pt = { x: number; y: number };
 
@@ -134,6 +135,7 @@ export default function HubRouteDemo({ active, preview }: { active: boolean; pre
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-4 sm:flex-row sm:items-start sm:justify-center">
       <div className="w-full max-w-xl">
+        {!preview && !reduced && <TryHint className="mb-3">Press Play to route the buses</TryHint>}
         <svg
           viewBox={`0 0 ${W} ${H}`}
           role="img"

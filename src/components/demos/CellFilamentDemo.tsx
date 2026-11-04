@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useClock, useReducedMotion } from "./hooks";
+import TryHint from "@/components/TryHint";
 
 type Cell = { x: number; y: number; r: number; score: number; filament: boolean };
 
@@ -47,6 +48,7 @@ export default function CellFilamentDemo({ active, preview }: { active: boolean;
 
   return (
     <div className="mx-auto max-w-xl">
+      {!preview && <TryHint className="mb-3">Drag the threshold slider</TryHint>}
       <svg
         viewBox="0 0 410 210"
         role="img"
@@ -92,8 +94,7 @@ export default function CellFilamentDemo({ active, preview }: { active: boolean;
         </p>
       </div>
       <p className="mt-2 text-xs text-muted">
-        Synthetic cells, not real microscopy. Green strokes are filaments; gold rings are cells the model flags.
-        Raising the threshold flags fewer cells.
+        Synthetic cells. Gold ring = flagged by the model, green stroke = filament. Higher threshold, fewer flags.
       </p>
     </div>
   );

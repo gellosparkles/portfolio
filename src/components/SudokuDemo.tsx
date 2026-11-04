@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { SudokuBoard3D } from "./three/lazy";
 import type { CellState } from "./three/SudokuBoard3D";
 import { PUZZLES, parse, solveSteps, type Step } from "@/lib/sudoku";
+import TryHint from "@/components/TryHint";
 
 const SPEEDS = [
   { label: "1×", stepsPerTick: 1, ms: 90 },
@@ -72,6 +73,7 @@ export default function SudokuDemo() {
 
   return (
     <div className="rounded-2xl border border-line bg-surface">
+      <TryHint className="px-4 pt-4">Press Solve to watch it backtrack</TryHint>
       <div className="flex flex-wrap items-center gap-2 border-b border-line p-4">
         <button onClick={start} disabled={stats.done} className={`${btn} bg-accent text-bg disabled:opacity-50`}>
           {running ? "Pause" : stats.done ? "Solved" : stats.places ? "Resume" : "Solve"}

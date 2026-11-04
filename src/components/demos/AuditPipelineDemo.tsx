@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useReducedMotion } from "./hooks";
+import TryHint from "@/components/TryHint";
 
 type Verdict = "M" | "P" | "N";
 
@@ -75,6 +76,7 @@ export default function AuditPipelineDemo({ active, preview }: { active: boolean
 
   return (
     <div>
+      {!preview && <TryHint className="mb-3">Pick a company to audit it</TryHint>}
       <div role="group" aria-label="Sample company" className="mb-3 flex flex-wrap gap-2 text-sm">
         {COMPANIES.map((c, i) => (
           <button
@@ -133,7 +135,7 @@ export default function AuditPipelineDemo({ active, preview }: { active: boolean
 
       <p className="mt-3 text-sm leading-relaxed text-muted" role="status">
         {done
-          ? `${summary} M = met, P = partial, N = not met. Synthetic data.`
+          ? `${summary} M met · P partial · N not met. Synthetic data.`
           : `Auditing ${company.name}: ${STAGES[shown].name}…`}
       </p>
     </div>

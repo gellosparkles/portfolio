@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useReducedMotion } from "./hooks";
+import TryHint from "@/components/TryHint";
 
 type Mode = "direct" | "turn";
 
@@ -11,13 +12,13 @@ const MODES: Record<Mode, { label: string; path: string; caption: string }> = {
     label: "Direct (STUN)",
     path: "M420,170 L240,170 L60,170",
     caption:
-      "Direct: both sides ask the STUN server for their public address, then video flows peer-to-peer from the Pi to the browser.",
+      "Direct: STUN finds each side's public address, then video goes straight from the Pi to the browser.",
   },
   turn: {
     label: "TURN fallback",
     path: "M420,170 L240,60 L240,170 L60,170",
     caption:
-      "TURN fallback: when the NAT blocks a direct path, the TURN server relays the video, adding a hop.",
+      "TURN fallback: when the NAT blocks a direct path, a relay server forwards the video.",
   },
 };
 
@@ -48,6 +49,7 @@ export default function ConnectionPathDemo({ active, preview }: { active: boolea
 
   return (
     <div className="mx-auto max-w-4xl">
+      {!preview && <TryHint className="mb-3 justify-center">Switch the route, then use the camera controls</TryHint>}
       <div role="group" aria-label="Connection type" className="mb-3 flex flex-wrap justify-center gap-2 text-sm">
         {(Object.keys(MODES) as Mode[]).map((m) => (
           <button

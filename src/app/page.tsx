@@ -5,6 +5,7 @@ import { NeuralHero } from "@/components/three/lazy";
 import { certifications, education, honors, interests, organizations, publications, site, skills, stats } from "@/content/site";
 import { projects } from "@/content/projects";
 import { work } from "@/content/work";
+import TryHint from "@/components/TryHint";
 
 const slide = { "nav-forward": "nav-forward", "nav-back": "nav-back", default: "none" };
 
@@ -82,8 +83,9 @@ export default function Home() {
           {/* The gesture model as an interactive network: per-frame CNN features feed a GRU, which feeds 5 classes. */}
           <figure className="self-center md:col-span-5">
             <NeuralHero className="h-[280px] w-full sm:h-[380px]" />
-            <figcaption className="mt-2 text-center text-xs text-muted">
-              <span className="font-mono">frames → MobileNet → GRU → gesture</span> · the model from my gesture paper. Hover to turn it.
+            <figcaption className="mt-2 flex flex-col items-center gap-1 text-center">
+              <TryHint>Hover to rotate</TryHint>
+              <span className="font-mono text-xs text-muted">My gesture model: frames → MobileNet → GRU → gesture</span>
             </figcaption>
           </figure>
         </section>

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { gestureClasses, gestureModels } from "@/content/gesture";
 import { PUZZLES, parse, solveSteps } from "@/lib/sudoku";
 import { useClock, useReducedMotion } from "./hooks";
+import TryHint from "@/components/TryHint";
 
 const matrix = gestureModels[0].confusion;
 const maxCount = Math.max(...matrix.flat());
@@ -89,17 +90,20 @@ export default function CaseStudyThumbsDemo({ active, preview }: { active: boole
   const t = useClock(active && !reduced);
   const Tile = preview ? "div" : Link;
   return (
-    <div className="grid gap-4 sm:grid-cols-2">
-      <Tile href="/projects/gesture-recognition" className={tile}>
-        <MiniMatrix t={t} />
-        <p className="mt-3 text-sm font-medium">Gesture recognition →</p>
-        <p className="text-xs text-muted">{gestureClasses.length}-class confusion matrix, in 3D.</p>
-      </Tile>
-      <Tile href="/projects/sudoku-solver" className={tile}>
-        <MiniBoard t={t} />
-        <p className="mt-3 text-sm font-medium">ML Sudoku solver →</p>
-        <p className="text-xs text-muted">ESP32-CAM digit reader and solver.</p>
-      </Tile>
+    <div>
+      {!preview && <TryHint className="mb-3">Open a case study</TryHint>}
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Tile href="/projects/gesture-recognition" className={tile}>
+          <MiniMatrix t={t} />
+          <p className="mt-3 text-sm font-medium">Gesture recognition →</p>
+          <p className="text-xs text-muted">{gestureClasses.length}-class confusion matrix, in 3D.</p>
+        </Tile>
+        <Tile href="/projects/sudoku-solver" className={tile}>
+          <MiniBoard t={t} />
+          <p className="mt-3 text-sm font-medium">ML Sudoku solver →</p>
+          <p className="text-xs text-muted">ESP32-CAM digit reader and solver.</p>
+        </Tile>
+      </div>
     </div>
   );
 }

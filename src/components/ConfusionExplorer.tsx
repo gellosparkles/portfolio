@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ConfusionMatrix3D } from "./three/lazy";
 import type { Cell } from "./three/ConfusionMatrix3D";
 import { gestureClasses, gestureModels } from "@/content/gesture";
+import TryHint from "@/components/TryHint";
 
 export default function ConfusionExplorer() {
   const [modelId, setModelId] = useState<(typeof gestureModels)[number]["id"]>("mobilenet");
@@ -55,10 +56,12 @@ export default function ConfusionExplorer() {
               </p>
             </>
           ) : (
-            <p className="text-muted">
-              Hover a bar to inspect it. Drag to rotate. <span className="text-accent">Blue</span> = correct,{" "}
-              <span className="text-warn">orange</span> = mistakes.
-            </p>
+            <>
+              <TryHint>Hover a bar · drag to rotate</TryHint>
+              <p className="mt-1 text-muted">
+                <span className="text-accent">Blue</span> = correct, <span className="text-warn">orange</span> = mistakes.
+              </p>
+            </>
           )}
         </div>
       </div>

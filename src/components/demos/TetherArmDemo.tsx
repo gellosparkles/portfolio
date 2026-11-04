@@ -13,6 +13,7 @@ import CanvasShell, {
   readCssColor,
   useMotionAllowed,
 } from "../three/CanvasShell";
+import TryHint from "@/components/TryHint";
 
 type Mode = "pointer" | "sliders";
 
@@ -255,11 +256,14 @@ export default function TetherArmDemo({
 
   const summary =
     mode === "pointer"
-      ? "Move the pointer: the first roll motor turns the arm toward it and the three pitch motors bend to reach it."
-      : "Drag the sliders to set each joint. Roll joints spin the chain about its length, pitch joints bend it.";
+      ? "The base roll motor turns toward your cursor; the three pitch motors bend to reach it."
+      : "Roll joints spin the chain along its length; pitch joints bend it.";
 
   return (
     <div className="mx-auto max-w-xl">
+      {!preview && (
+        <TryHint className="mb-3">{mode === "pointer" ? "Move your cursor over the arm to steer it" : "Drag a slider to move a joint"}</TryHint>
+      )}
       <div
         onPointerMove={onPointer}
         onPointerDown={onPointer}
