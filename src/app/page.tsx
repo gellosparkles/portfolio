@@ -47,6 +47,13 @@ export default function Home() {
     resume && { label: "Resume", href: resume, text: "PDF, one page" },
   ].filter(Boolean) as { label: string; href: string; text: string }[];
   const [primary, ...rest] = contacts;
+  const about: { label: string; list?: true; items: { main: string; detail?: string; when?: string }[] }[] = [
+    { label: "Education", items: [{ main: education.school, detail: `${education.degree} · GPA ${education.gpa}`, when: education.when }] },
+    { label: "Honors", items: honors.map((h) => ({ main: h.title, detail: h.org, when: h.when })) },
+    { label: "Certification", items: certifications.map((c) => ({ main: c.title, detail: c.org, when: c.when })) },
+    { label: "Tools I use", list: true, items: [{ main: skills.join(", ") }] },
+    { label: "Outside of work", list: true, items: [{ main: interests.join(", ") }] },
+  ];
   let fig = 0;
 
   return (
@@ -208,58 +215,27 @@ export default function Home() {
           </ul>
         </section>
 
-        {/* About */}
+        {/* About: one ruled list, every entry in the same shape (main line, detail line, dates on the right) */}
         <section className="pt-20">
           <Heading id="about" title="About" />
-          <div className="mt-8 grid gap-12 md:grid-cols-2">
-            <div className="space-y-8">
-              <div>
-                <p className="label">Education</p>
-                <p className="mt-2 font-medium">{education.school}</p>
-                <p className="text-sm text-muted">
-                  {education.degree} · {education.when}
-                </p>
-                <p className="mt-3 flex items-baseline gap-1.5">
-                  <span className="font-serif text-4xl tracking-tight">{education.gpa}</span>
-                  <span className="text-sm text-muted">GPA</span>
-                </p>
-              </div>
-              <div>
-                <p className="label">Tools I use</p>
-                <p className="mt-2 leading-relaxed">{skills.join(", ")}.</p>
-              </div>
-              <div>
-                <p className="label">Outside of work</p>
-                <p className="mt-2 leading-relaxed">{interests.join(", ")}.</p>
-              </div>
-            </div>
-            <div className="space-y-8">
-              <div>
-                <p className="label">Honors</p>
-                <ul className="mt-2 divide-y divide-line border-y border-line">
-                  {honors.map((h) => (
-                    <li key={h.title} className="flex flex-wrap items-baseline justify-between gap-x-4 py-3">
-                      <span className="text-sm font-medium">{h.title}</span>
-                      <span className="font-mono text-xs text-muted">{h.when}</span>
-                    </li>
+          <dl className="mx-auto mt-4 max-w-4xl border-t border-line">
+            {about.map((g) => (
+              <div key={g.label} className="grid gap-x-10 gap-y-2 border-b border-line py-6 md:grid-cols-[11rem_1fr]">
+                <dt className="label pt-1">{g.label}</dt>
+                <dd className="space-y-4">
+                  {g.items.map((it) => (
+                    <div key={it.main} className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-0.5">
+                      <div className="min-w-0">
+                        <p className={g.list ? "leading-relaxed" : "font-medium"}>{it.main}</p>
+                        {it.detail && <p className="text-sm text-muted">{it.detail}</p>}
+                      </div>
+                      {it.when && <p className="whitespace-nowrap font-mono text-xs text-muted">{it.when}</p>}
+                    </div>
                   ))}
-                </ul>
+                </dd>
               </div>
-              <div>
-                <p className="label">Certification</p>
-                <ul className="mt-2 divide-y divide-line border-y border-line">
-                  {certifications.map((c) => (
-                    <li key={c.title} className="py-3">
-                      <p className="text-sm font-medium">{c.title}</p>
-                      <p className="text-xs text-muted">
-                        {c.org} · {c.when}
-                      </p>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </div>
+            ))}
+          </dl>
         </section>
 
         {/* Contact */}

@@ -251,7 +251,7 @@ export const certifications = [
   {
     title: "Competency Certification in Generative AI Office Applications",
     org: "Institute for Information Industry (III), Taiwan",
-    when: "Issued Jul 2026 · valid through Jul 2028",
+    when: "Jul 2026 – Jul 2028",
     url: null as string | null,
   },
 ];
