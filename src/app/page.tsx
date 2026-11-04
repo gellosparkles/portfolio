@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ViewTransition, type ReactNode } from "react";
+import { ViewTransition } from "react";
 import WorkDemo from "@/components/WorkDemo";
 import { NeuralHero } from "@/components/three/lazy";
 import { certifications, education, honors, interests, organizations, publications, site, skills } from "@/content/site";
@@ -15,11 +15,11 @@ const caseStudies = projects.filter((p) => !p.demo);
 const pad = (n: number) => String(n).padStart(2, "0");
 const external = (href: string) => (href.startsWith("http") ? { target: "_blank", rel: "noreferrer" } : {});
 
-function Heading({ id, title, aside }: { id: string; title: string; aside?: ReactNode }) {
+// Section titles: centred and a step above the project titles (text-4xl) so sections read apart.
+function Heading({ id, title }: { id: string; title: string }) {
   return (
-    <div id={id} className="flex scroll-mt-20 flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-t border-fg pt-4">
-      <h2 className="font-serif text-3xl tracking-tight sm:text-4xl">{title}</h2>
-      {aside && <p className="text-sm text-muted">{aside}</p>}
+    <div id={id} className="scroll-mt-20 border-t border-fg pb-4 pt-8 text-center">
+      <h2 className="font-serif text-5xl tracking-tight sm:text-6xl">{title}</h2>
     </div>
   );
 }
@@ -53,7 +53,7 @@ export default function Home() {
     <ViewTransition enter={slide} exit={slide} default="none">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         {/* Hero: who I am in my own words, next to the gesture model */}
-        <section className="grid gap-10 pb-14 pt-10 md:grid-cols-12 md:gap-12 md:pt-16">
+        <section className="grid gap-10 pb-6 pt-10 md:grid-cols-12 md:gap-12 md:pt-16">
           <div className="md:col-span-7 md:pt-4">
             <p className="font-mono text-xs text-muted">
               {site.location} · USC Viterbi ECE · {site.graduation}
@@ -88,8 +88,8 @@ export default function Home() {
         </section>
 
         {/* Work: one spread per role, each led by a photo from the build */}
-        <section className="pt-20">
-          <Heading id="work" title="Selected work" aside="In resume order. Each one opens to a live demo and the full build log." />
+        <section className="pt-8">
+          <Heading id="work" title="Selected work" />
           <ol>
             {work.map((w, i) => {
               const more = (w.media?.length ?? 0) - (w.media?.some((m) => m.src === w.cover?.src) ? 1 : 0);
@@ -149,7 +149,7 @@ export default function Home() {
 
         {/* Research and case studies */}
         <section className="pt-20">
-          <Heading id="research" title="Research and case studies" aside="Published as Tz-Jing Lee." />
+          <Heading id="research" title="Research and case studies" />
           <ul>
             {publications.map((p) => (
               <li key={p.title} className="border-b border-line">
@@ -190,7 +190,7 @@ export default function Home() {
 
         {/* Organizations */}
         <section className="pt-20">
-          <Heading id="organizations" title="Organizations" aside="Student groups I'm part of at USC." />
+          <Heading id="organizations" title="Organizations" />
           <ul className="text-sm">
             {organizations.map((o) => (
               <li key={o.org} className="grid grid-cols-[1fr_auto] gap-x-6 gap-y-0.5 border-b border-line py-4 sm:grid-cols-[14rem_1fr_auto]">
