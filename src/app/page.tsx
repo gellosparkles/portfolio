@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ViewTransition, type ReactNode } from "react";
 import WorkDemo from "@/components/WorkDemo";
+import { NeuralHero } from "@/components/three/lazy";
 import { certifications, education, honors, interests, organizations, publications, site, skills, stats } from "@/content/site";
 import { projects } from "@/content/projects";
 import { work } from "@/content/work";
@@ -53,7 +54,7 @@ export default function Home() {
   return (
     <ViewTransition enter={slide} exit={slide} default="none">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        {/* Hero: who I am in my own words, next to a headshot */}
+        {/* Hero: who I am in my own words, next to the gesture model */}
         <section className="grid gap-10 pb-14 pt-10 md:grid-cols-12 md:gap-12 md:pt-16">
           <div className="md:col-span-7 md:pt-4">
             <p className="font-mono text-xs text-muted">
@@ -78,25 +79,13 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="md:col-span-5">
-            <div className="print mx-auto w-full max-w-sm md:ml-auto md:mr-0">
-              {site.headshot ? (
-                // eslint-disable-next-line @next/next/no-img-element -- a single pre-sized portrait; next/image adds nothing here
-                <img src={site.headshot.src} alt={site.headshot.alt} className="block aspect-[4/5] w-full object-cover" />
-              ) : (
-                // Placeholder until site.headshot is set in src/content/site.ts.
-                <div className="grid aspect-[4/5] w-full place-items-center border border-dashed border-line bg-bg text-muted">
-                  <div className="text-center">
-                    <svg aria-hidden viewBox="0 0 64 64" className="mx-auto h-16 w-16" fill="none" stroke="currentColor" strokeWidth="1.5">
-                      <circle cx="32" cy="24" r="11" />
-                      <path d="M12 56c2-11 10-17 20-17s18 6 20 17" />
-                    </svg>
-                    <p className="label mt-3">Headshot</p>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
+          {/* The gesture model as an interactive network: per-frame CNN features feed a GRU, which feeds 5 classes. */}
+          <figure className="self-center md:col-span-5">
+            <NeuralHero className="h-[280px] w-full sm:h-[380px]" />
+            <figcaption className="mt-2 text-center text-xs text-muted">
+              <span className="font-mono">frames → MobileNet → GRU → gesture</span> · the model from my gesture paper. Hover to turn it.
+            </figcaption>
+          </figure>
         </section>
 
         {/* The headline numbers, as a plain ledger */}

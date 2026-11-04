@@ -2,7 +2,7 @@
 
 A recruiting portfolio built with Next.js 16, React 19, TypeScript, Tailwind v4 and React Three Fiber. Every page is prerendered as static content and hosted on Vercel.
 
-- **Home** (`/`): first-person intro beside a headshot, then one captioned photo spread per role, research, organizations, about and contact. The design rationale is in [docs/redesign.md](docs/redesign.md).
+- **Home** (`/`): first-person intro beside an interactive 3D network of the gesture model, then one captioned photo spread per role, research, organizations, about and contact. The design rationale is in [docs/redesign.md](docs/redesign.md).
 - **`/projects/gesture-recognition`**: case study with a 3D confusion-matrix explorer built from the paper's real results
 - **`/projects/sudoku-solver`**: case study with a live 3D backtracking Sudoku solver
 
@@ -10,7 +10,7 @@ A recruiting portfolio built with Next.js 16, React 19, TypeScript, Tailwind v4 
 
 | What | Where |
 |------|-------|
-| Name, intro, headshot, tagline, links (email, LinkedIn, GitHub, resume), education, honors, certifications, skills | `src/content/site.ts` |
+| Name, intro, tagline, links (email, LinkedIn, GitHub, resume), education, honors, certifications, skills | `src/content/site.ts` |
 | Roles on the home page, with each one's cover photo (`cover`) and build log (`media`) | `src/content/site.ts` (`experience`) |
 | Case-study rows and the cell-filament tool | `src/content/projects.ts` |
 | Gesture-model results (confusion matrices, P/R/F1) | `src/content/gesture.ts` |
