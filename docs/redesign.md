@@ -40,7 +40,7 @@ The real build photos, the strongest proof that the work happened, were only on 
 - **Type:** Newsreader (serif) for the name, headings and the intro; IBM Plex Sans for body text; IBM Plex Mono for labels, dates and figure numbers.
 - **Colour:** warm off-white paper `#f7f5f0`, near-black ink `#161512`, hairline rules. One accent, marker blue `#2347b8`, which matches the whiteboard marker in the photos and is used for links and figure numbers only. The demos keep their own palette variables.
 - **Hero:** first-person intro on the left and, on the right, the interactive 3D network from the original design (the gesture model: frames → MobileNet → GRU → gesture), captioned. Earlier iterations used three project photos and then a headshot placeholder here.
-- **Numbers:** the four stats become a plain ruled ledger in ink, with no coloured bars.
+- **Numbers:** the four-stat bar under the hero is gone; the numbers live in each work spread instead.
 - **Work:** one spread per project in resume order: number and dates, title, role, a first-person sentence, the headline number, highlights as plain text, and a captioned cover photo that says how many more photos are in the build log. The cell-filament tool has no photos, so its spread shows the live demo instead.
 - **Research, organizations, about, contact:** ruled lists and tables, with no pills or tag colours.
 - **Copy voice:** first person, concrete, no slogans. Every claim maps to a field in `src/content/`.

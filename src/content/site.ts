@@ -20,7 +20,7 @@ export const site = {
   },
 };
 
-// Headline numbers shown under the hero, in display order: big value, small unit, one-line label.
+// Headline numbers: big value, small unit, one-line label. Not shown on the site since the ledger under the hero was removed.
 export const stats = [
   { value: "~2", unit: "yrs", label: "AI & bio-sensor research · 2 labs" },
   { value: "2", unit: "wins", label: "hackathons · $1,200 in prizes" },

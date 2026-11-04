@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ViewTransition, type ReactNode } from "react";
 import WorkDemo from "@/components/WorkDemo";
 import { NeuralHero } from "@/components/three/lazy";
-import { certifications, education, honors, interests, organizations, publications, site, skills, stats } from "@/content/site";
+import { certifications, education, honors, interests, organizations, publications, site, skills } from "@/content/site";
 import { projects } from "@/content/projects";
 import { work } from "@/content/work";
 import TryHint from "@/components/TryHint";
@@ -11,9 +11,6 @@ const slide = { "nav-forward": "nav-forward", "nav-back": "nav-back", default: "
 
 // Case studies with their own pages (the cell-filament tool is on the work list instead).
 const caseStudies = projects.filter((p) => !p.demo);
-
-// Ledger cell borders: 2 × 2 on phones, one row of 4 from sm up.
-const CELL = ["pr-4", "border-l pl-4", "border-t pr-4 sm:border-t-0 sm:border-l sm:pl-4", "border-t border-l pl-4 sm:border-t-0"];
 
 const pad = (n: number) => String(n).padStart(2, "0");
 const external = (href: string) => (href.startsWith("http") ? { target: "_blank", rel: "noreferrer" } : {});
@@ -89,19 +86,6 @@ export default function Home() {
             </figcaption>
           </figure>
         </section>
-
-        {/* The headline numbers, as a plain ledger */}
-        <dl className="grid grid-cols-2 border-y border-line sm:grid-cols-4">
-          {stats.map((s, i) => (
-            <div key={s.label} className={`border-line py-5 ${CELL[i]}`}>
-              <dt className="flex items-baseline gap-1.5">
-                <span className="font-serif text-4xl tracking-tight">{s.value}</span>
-                <span className="text-sm text-muted">{s.unit}</span>
-              </dt>
-              <dd className="mt-1 text-sm text-muted">{s.label}</dd>
-            </div>
-          ))}
-        </dl>
 
         {/* Work: one spread per role, each led by a photo from the build */}
         <section className="pt-20">
