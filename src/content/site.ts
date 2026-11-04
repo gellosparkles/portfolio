@@ -11,7 +11,7 @@ export const site = {
   seeking: "Seeking Summer 2027 internships in AI and hardware systems.",
   // Home-page intro, first person. Every claim here is backed by an entry in `experience` below.
   intro:
-    "I study electrical and computer engineering at USC, and I like the point where a model has to meet real hardware. Lately that has meant redesigning a sweat sensor so it stops leaking, wiring power and control for a seven-joint robot arm, and starting an event-bus company whose first trip sold out in three days.",
+    "I study electrical and computer engineering at USC, and I am obsessed with everything hardware, AI, security and entrepreneurship. Lately I have been designing sweat-sensor microfluidics and electrode layers for pending manuscripts, wiring power and control for a 7-DOF robot arm, and starting an event-bus company whose first trip sold out in three days.",
   links: {
     email: "hansilee@usc.edu" as string | null,
     linkedin: "https://www.linkedin.com/in/tzjinglee" as string | null,
