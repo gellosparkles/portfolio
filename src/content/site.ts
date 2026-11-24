@@ -20,11 +20,11 @@ export const site = {
   },
 };
 
-// Headline numbers: big value, small unit, one-line label. Not shown on the site since the ledger under the hero was removed.
+// Headline numbers: big value, small unit, one-line label. Shown as the ledger under the hero.
 export const stats = [
   { value: "~2", unit: "yrs", label: "AI & bio-sensor research · 2 labs" },
   { value: "2", unit: "wins", label: "hackathons · $1,200 in prizes" },
-  { value: "2", unit: "papers", label: "co-authored manuscripts, to appear 2026" },
+  { value: "2", unit: "papers", label: "co-authored manuscripts, in preparation" },
   { value: "5", unit: "orgs", label: "robotics · cyber · software" },
 ];
 
@@ -32,14 +32,26 @@ export const stats = [
 export const organizations = [
   { org: "Terra Labs", role: "Electrical Engineer / Programmer", tag: "Robotics", href: "https://uscterralabs.com" },
   { org: "Cyborg", role: "General member", tag: "Cyber", href: "https://usccyb.org" },
-  { org: "Cyborg Consulting", role: "Consultant", tag: "Cyber", href: "https://usccyb.org/consulting/" },
+  {
+    org: "Cyborg Consulting",
+    role: "Cybersecurity Technical Consultant",
+    detail: "6-week penetration test of a startup client with Nmap, Nikto, Kiterunner and Burp Suite; about 1 finding a week, written up in 3 findings reports.",
+    tag: "Cyber",
+    href: "https://usccyb.org/consulting/",
+  },
   { org: "TACTICS", role: "General member", tag: "Cyber", href: "https://usctactics.org" },
-  { org: "HackSC", role: "Product Manager / Backend Developer", tag: "Software", href: "https://hacksc.com" },
-] as { org: string; role: string; tag: string; href?: string }[];
+  {
+    org: "HackSC",
+    role: "Product Manager / Backend Developer",
+    detail: "Built the email system and security gates for the check-in and hacker portal used by 250 attendees.",
+    tag: "Software",
+    href: "https://hacksc.com",
+  },
+] as { org: string; role: string; detail?: string; tag: string; href?: string }[];
 
 export const education = {
   school: "University of Southern California, Viterbi School of Engineering",
-  degree: "B.S. Electrical and Computer Engineering",
+  degree: "B.S. Electrical and Computer Engineering, Minor in Cybersecurity",
   when: "Aug 2025 – May 2029",
   gpa: "3.85",
 };
@@ -83,13 +95,13 @@ export const experience: Experience[] = [
     when: "Jan 2026 – Present",
     summary:
       "Redesigned a published spiral sweat-collection layout to stop fluid leaks; the lab confirmed it was more reliable and performed better in experiments.",
-    chips: ["CURVE Fellow", "2 manuscripts (to appear)", "Leak-free redesign", "Microfluidics"],
+    chips: ["CURVE Fellow", "2 manuscripts (in preparation)", "Leak-free redesign", "Microfluidics"],
     big: { value: "2", unit: "manuscripts" },
     hook: "A published sweat sensor leaked at every turn. I smoothed them out.",
     details: [
       "Wearable sweat sensors route sweat from the skin through a microfluidic channel and past sensing electrodes.",
       "The published layout stacks half-circle channels joined by hairpin turns, and fluid leaked out at those turns. My redesign replaces them with one continuous spiral.",
-      "The lab confirmed the redesign was more reliable and performed better in experiments. Two co-authored manuscripts on the work are to appear in 2026.",
+      "The lab confirmed the redesign was more reliable and performed better in experiments. Two co-authored manuscripts on the work are in preparation.",
     ],
     demo: "spiral-sensor",
     cover: { src: "/media/khan-lab/spiral-design.webp", alt: "CAD drawing of the spiral sweat sensor: bottom electrode traces in gold following a continuous blue microfluidic spiral, with a 10 mm scale bar", caption: "My spiral design, rendered from the CAD file: electrodes in gold, the microfluidic channel in blue." },
@@ -223,6 +235,16 @@ export const publications = [
     highlight: "85% test accuracy vs. 66% for an RNN + GRU baseline",
     href: "/projects/gesture-recognition",
     paperPdf: null as string | null,
+  },
+];
+
+// Projects without their own page: listed under Research as plain rows.
+export const courseProjects = [
+  {
+    title: "IoT Sensor Board",
+    kicker: "EE 250 course project, with a partner · Fall 2026",
+    summary: "Designed in KiCad, fabricated and hand-soldered: light, temperature, vibration and button inputs, with LEDs that react to vibration and button presses.",
+    metric: { value: "4", label: "sensor inputs" },
   },
 ];
 

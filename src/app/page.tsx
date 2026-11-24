@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ViewTransition } from "react";
 import WorkDemo from "@/components/WorkDemo";
 import { NeuralHero } from "@/components/three/lazy";
-import { certifications, education, honors, interests, organizations, publications, site, skills } from "@/content/site";
+import { certifications, courseProjects, education, honors, interests, organizations, publications, site, skills, stats } from "@/content/site";
 import { projects } from "@/content/projects";
 import { agentWorkflows, ongoing } from "@/content/agents";
 import { work } from "@/content/work";
@@ -12,6 +12,9 @@ const slide = { "nav-forward": "nav-forward", "nav-back": "nav-back", default: "
 
 // Case studies with their own pages (the cell-filament tool is on the work list instead).
 const caseStudies = projects.filter((p) => !p.demo);
+
+// Ledger cell borders: 2 × 2 on phones, one row of 4 from sm up.
+const CELL = ["pr-4", "border-l pl-4", "border-t pr-4 sm:border-t-0 sm:border-l sm:pl-4", "border-t border-l pl-4 sm:border-t-0"];
 
 const pad = (n: number) => String(n).padStart(2, "0");
 const external = (href: string) => (href.startsWith("http") ? { target: "_blank", rel: "noreferrer" } : {});
@@ -67,6 +70,7 @@ export default function Home() {
               {site.location} · USC Viterbi ECE · {site.graduation}
             </p>
             <h1 className="mt-5 font-serif text-6xl leading-none tracking-tight sm:text-7xl">{site.name}</h1>
+            <p className="mt-4 font-serif text-2xl italic text-accent sm:text-3xl">{site.tagline}</p>
             <p className="mt-6 font-serif text-[1.375rem] leading-[1.45] sm:text-2xl sm:leading-[1.45]">{site.intro}</p>
             <p className="mt-5 text-sm text-muted">
               My legal name is {site.legalName}; it is the name on my paper and certificate. {site.seeking}
@@ -94,6 +98,19 @@ export default function Home() {
             </figcaption>
           </figure>
         </section>
+
+        {/* The headline numbers, as a plain ledger */}
+        <dl className="mt-4 grid grid-cols-2 border-y border-line sm:grid-cols-4">
+          {stats.map((s, i) => (
+            <div key={s.label} className={`border-line py-5 ${CELL[i]}`}>
+              <dt className="flex items-baseline gap-1.5">
+                <span className="font-serif text-4xl tracking-tight">{s.value}</span>
+                <span className="text-sm text-muted">{s.unit}</span>
+              </dt>
+              <dd className="mt-1 text-sm text-muted">{s.label}</dd>
+            </div>
+          ))}
+        </dl>
 
         {/* Work: one spread per role, each led by a photo from the build */}
         <section className="pt-8">
@@ -155,9 +172,9 @@ export default function Home() {
           </ol>
         </section>
 
-        {/* Research and case studies */}
+        {/* Research, case studies and smaller projects */}
         <section className="pt-20">
-          <Heading id="research" title="Research and case studies" />
+          <Heading id="research" title="Research and projects" />
           <ul>
             {publications.map((p) => (
               <li key={p.title} className="border-b border-line">
@@ -191,6 +208,19 @@ export default function Home() {
                     <span className="text-sm text-muted">{p.metric.label}</span>
                   </span>
                 </Link>
+              </li>
+            ))}
+            {courseProjects.map((p) => (
+              <li key={p.title} className="grid gap-2 border-b border-line py-5 sm:grid-cols-[1fr_auto] sm:items-baseline sm:gap-8">
+                <span>
+                  <span className="font-serif text-xl leading-snug">{p.title}</span>
+                  <span className="mt-1 block text-sm text-muted">{p.kicker}</span>
+                  <span className="mt-1 block max-w-2xl text-sm">{p.summary}</span>
+                </span>
+                <span className="flex items-baseline gap-2 sm:justify-end">
+                  <span className="font-serif text-2xl">{p.metric.value}</span>
+                  <span className="text-sm text-muted">{p.metric.label}</span>
+                </span>
               </li>
             ))}
           </ul>
@@ -312,7 +342,10 @@ export default function Home() {
                 ) : (
                   <span className="font-medium">{o.org}</span>
                 )}
-                <span className="order-3 col-span-2 text-muted sm:order-none sm:col-span-1">{o.role}</span>
+                <span className="order-3 col-span-2 text-muted sm:order-none sm:col-span-1">
+                  {o.role}
+                  {o.detail && <span className="mt-1 block text-fg">{o.detail}</span>}
+                </span>
                 <span className="font-mono text-xs text-muted">{o.tag}</span>
               </li>
             ))}
