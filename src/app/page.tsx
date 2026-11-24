@@ -4,6 +4,7 @@ import WorkDemo from "@/components/WorkDemo";
 import { NeuralHero } from "@/components/three/lazy";
 import { certifications, education, honors, interests, organizations, publications, site, skills } from "@/content/site";
 import { projects } from "@/content/projects";
+import { agentWorkflows, ongoing } from "@/content/agents";
 import { work } from "@/content/work";
 import TryHint from "@/components/TryHint";
 
@@ -193,6 +194,109 @@ export default function Home() {
               </li>
             ))}
           </ul>
+        </section>
+
+        {/* AI agent workflow development */}
+        <section className="pt-20">
+          <Heading id="agents" title="AI agent workflows" />
+          <p className="mx-auto max-w-2xl text-center text-muted">Agent systems I designed to plan, schedule and build my own work, with memory that lasts across sessions and devices.</p>
+          <ol className="mt-4">
+            {agentWorkflows.map((a, i) => (
+              <li key={a.title} className="grid gap-6 border-b border-line py-10 md:grid-cols-12 md:gap-10">
+                <div className="md:col-span-5">
+                  <p className="font-mono text-xs text-muted">
+                    <span className="text-fg">{pad(i + 1)}</span> · {a.when}
+                  </p>
+                  <h3 className="mt-3 font-serif text-3xl leading-tight tracking-tight">{a.title}</h3>
+                  <p className="mt-1 text-sm text-muted">{a.stack}</p>
+                  <p className="mt-6 flex items-baseline gap-2">
+                    <span className="font-serif text-5xl leading-none tracking-tight">{a.big.value}</span>
+                    <span className="text-sm text-muted">{a.big.unit}</span>
+                  </p>
+                </div>
+                <div className="md:col-span-7">
+                  <ul className="list-disc space-y-3 pl-5 leading-relaxed marker:text-accent">
+                    {a.points.map((p) => (
+                      <li key={p}>{p}</li>
+                    ))}
+                  </ul>
+                  <p className="mt-5 text-sm text-muted">{a.chips.join(" · ")}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        {/* In progress: the hardware build, then what comes after it */}
+        <section className="pt-20">
+          <Heading id="building" title="Now building" />
+          <div className="grid gap-6 py-6 md:grid-cols-12 md:gap-10">
+            <div className="md:col-span-5">
+              <p className="flex items-center gap-2 font-mono text-xs text-muted">
+                <span aria-hidden className="h-1.5 w-1.5 animate-pulse rounded-full bg-accent" />
+                In progress · {ongoing.status}
+              </p>
+              <h3 className="mt-3 font-serif text-3xl leading-tight tracking-tight sm:text-4xl">{ongoing.title}</h3>
+            </div>
+            <div className="md:col-span-7">
+              <p className="font-serif text-xl leading-snug sm:text-[1.375rem]">{ongoing.pitch}</p>
+              <p className="mt-4 text-sm text-muted">{ongoing.why}</p>
+            </div>
+          </div>
+
+          <dl className="border-t border-line">
+            {ongoing.layers.map((l, i) => (
+              <div key={l.name} className="grid gap-x-10 gap-y-1 border-b border-line py-5 md:grid-cols-[11rem_1fr]">
+                <dt>
+                  <span className="font-medium">
+                    {i + 1}. {l.name}
+                  </span>
+                  <span className="block font-mono text-xs text-muted">{l.where}</span>
+                </dt>
+                <dd className="leading-relaxed">{l.what}</dd>
+              </div>
+            ))}
+          </dl>
+          <p className="mt-3 overflow-x-auto whitespace-nowrap font-mono text-xs text-muted">
+            agent (VM) → Pi: nftables → Envoy → OPA → internet · Pi heartbeat → FPGA watchdog → cuts the link
+          </p>
+
+          <p className="label mt-12">The plan, week by week</p>
+          <ol className="mt-3 border-t border-line">
+            {ongoing.weeks.map((w) => (
+              <li key={w.n} className="grid gap-1 border-b border-line py-4 sm:grid-cols-[3rem_16rem_1fr] sm:gap-6">
+                <span className="font-mono text-sm text-accent">{w.n}</span>
+                <span className="font-medium">{w.goal}</span>
+                <span className="text-sm text-muted">Done when: {w.done}</span>
+              </li>
+            ))}
+          </ol>
+
+          <div className="mt-10 grid gap-8 md:grid-cols-2">
+            <div>
+              <p className="label">What I will measure</p>
+              <ul className="mt-3 list-disc space-y-1 pl-5 text-sm marker:text-accent">
+                {ongoing.measures.map((m) => (
+                  <li key={m}>{m}</li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <p className="label">Prep this term</p>
+              <p className="mt-3 text-sm text-muted">{ongoing.prep.join(" · ")}</p>
+            </div>
+          </div>
+
+          <p className="label mt-12">After the break</p>
+          <ol className="mt-3 grid gap-x-10 border-t border-line md:grid-cols-3">
+            {ongoing.future.map((f, i) => (
+              <li key={f.title} className="border-b border-line py-5">
+                <p className="font-mono text-xs text-muted">Next {pad(i + 1)}</p>
+                <p className="mt-1 font-serif text-xl leading-snug">{f.title}</p>
+                <p className="mt-2 text-sm leading-relaxed text-muted">{f.text}</p>
+              </li>
+            ))}
+          </ol>
         </section>
 
         {/* Organizations */}
