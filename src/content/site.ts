@@ -4,7 +4,7 @@ export const site = {
   name: "Hansi Lee",
   legalName: "Tz-Jing Lee",
   role: "Electrical & Computer Engineering · USC Viterbi",
-  graduation: "Graduating May 2028",
+  graduation: "Sophomore · Graduating May 2029",
   location: "Los Angeles, CA",
   focus: "AI + Hardware Systems",
   tagline: "AI that runs on real hardware.",
@@ -40,7 +40,7 @@ export const organizations = [
 export const education = {
   school: "University of Southern California, Viterbi School of Engineering",
   degree: "B.S. Electrical and Computer Engineering",
-  when: "Aug 2025 – May 2028",
+  when: "Aug 2025 – May 2029",
   gpa: "3.85",
 };
 
